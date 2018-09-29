@@ -1,0 +1,11 @@
+/* force full height on public template */
+#body-public .full-height {
+	height: 100%;
+}
+.ie #body-public .full-height {
+	display: block;
+}
+
+#mmframe {
+	padding-top: inherit;
+}

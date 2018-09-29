@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<info>
+	<id>files_mindmap</id>
+	<name>Mind Map</name>
+	<description>This application enables Nextcloud users to open, save and edit mind map files in the web browser. If enabled, an entry in the New button at the top of the web browser the Text file entry appears. When clicked, a new text file opens in the browser and the file can be saved into the current Nextcloud directory. Further, when a text file is clicked in the web browser, it will be opened and editable. If the privileges allow, a user can also edit shared files and save these changes back into the web browser.
+	</description>
+	<licence>AGPL</licence>
+	<author>Jingtao Yan</author>
+	<version>0.0.1</version>
+	<shipped>true</shipped>
+	<default_enable/>
+	<dependencies>
+		<nextcloud min-version="14" max-version="14" />
+	</dependencies>
+	<repair-steps>
+		<install>
+			<step>OCA\Files_MindMap\Migration\InstallStep</step>
+		</install>
+		<uninstall>
+			<step>OCA\Files_MindMap\Migration\UninstallStep</step>
+		</uninstall>
+	</repair-steps>
+	<namespace>Files_MindMap</namespace>
+</info>
