@@ -41,7 +41,11 @@ class DisplayController extends Controller {
 		$response = new TemplateResponse($this->appName, 'viewer', $params, 'blank');
 		
 		$policy = new ContentSecurityPolicy();
-		$policy->addAllowedChildSrcDomain('\'self\'');
+		$policy->addAllowedFrameDomain('\'self\'');
+        $policy->addAllowedFrameDomain('data:');
+        $policy->addAllowedFrameDomain('blob:');
+        $policy->addAllowedObjectDomain('\'self\'');
+        $policy->addAllowedObjectDomain('blob:');
 		$policy->addAllowedFontDomain('data:');
 		$policy->addAllowedImageDomain('*');
 		$policy->allowEvalScript(true);

@@ -92,7 +92,7 @@ redirectIfNotDisplayedInFrame();
 			window.parent.OCA.FilesMindMap.load(function(data){
                 var obj = {"root":
                             {"data":
-                                {"id":"i"+String(Math.floor(Math.random() * 9e15)).substr(0, 11),
+                                {"id":"bopmq"+String(Math.floor(Math.random() * 9e15)).substr(0, 7),
                                  "created":(new Date()).getTime(),
                                  "text":"中心主题"
                                 },
