@@ -1,24 +1,27 @@
 <?xml version="1.0"?>
-<info>
-	<id>files_mindmap</id>
-	<name>Mind Map</name>
-	<description>This application enables Nextcloud users to open, save and edit mind map files in the web browser. If enabled, an entry in the New button at the top of the web browser the Text file entry appears. When clicked, a new text file opens in the browser and the file can be saved into the current Nextcloud directory. Further, when a text file is clicked in the web browser, it will be opened and editable. If the privileges allow, a user can also edit shared files and save these changes back into the web browser.
-	</description>
-	<licence>AGPL</licence>
-	<author>Jingtao Yan</author>
-	<version>0.0.2</version>
-	<shipped>true</shipped>
-	<default_enable/>
-	<dependencies>
-		<nextcloud min-version="14" max-version="14" />
-	</dependencies>
-	<repair-steps>
-		<install>
-			<step>OCA\Files_MindMap\Migration\InstallStep</step>
-		</install>
-		<uninstall>
-			<step>OCA\Files_MindMap\Migration\UninstallStep</step>
-		</uninstall>
-	</repair-steps>
-	<namespace>Files_MindMap</namespace>
+<info xmlns:xsi= "http://www.w3.org/2001/XMLSchema-instance"
+	  xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
+<id>files_mindmap</id>
+<name>Mind Map</name>
+<summary>A Mind map editor</summary>
+<description><![CDATA[This application enables Nextcloud users to open, save and edit mind map files in the web browser. If enabled, an entry in the New button at the top of the web browser the Mindmap file entry appears. When clicked, a new mindmap file opens in the browser and the file can be saved into the current Nextcloud directory.]]></description>
+<version>0.0.3</version>
+<licence>agpl</licence>
+<author mail="i@actom.me" homepage="https://actom.me">Jingtao Yan</author>
+<namespace>Files_MindMap</namespace>
+<category>files</category>
+<category>office</category>
+<bugs>https://github.com/ACTom/files_mindmap/issues</bugs>
+<dependencies>
+	<nextcloud min-version="14" max-version="14"/>
+</dependencies>
+<default_enable/>
+<repair-steps>
+	<install>
+		<step>OCA\Files_MindMap\Migration\InstallStep</step>
+	</install>
+	<uninstall>
+		<step>OCA\Files_MindMap\Migration\UninstallStep</step>
+	</uninstall>
+</repair-steps>
 </info>
