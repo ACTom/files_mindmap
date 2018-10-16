@@ -46,6 +46,15 @@ class FileHandlingController extends Controller{
 		$this->userFolder = $userFolder;
 	}
 
+    /**
+     * load mind map file
+     *
+     * @NoAdminRequired
+     *
+     * @param string $dir
+     * @param string $filename
+     * @return DataResponse
+     */
 	public function load($dir, $filename) {
 		try {
 			if (!empty($filename)) {
@@ -58,8 +67,8 @@ class FileHandlingController extends Controller{
 					return new DataResponse(['message' => $this->l->t('You can not open a folder')], Http::STATUS_BAD_REQUEST);
 				}
 
-				// default of 4MB
-				$maxSize = 4194304;
+				// default of 100MB
+				$maxSize = 104857600;
 				if ($file->getSize() > $maxSize) {
 					return new DataResponse(['message' => (string)$this->l->t('This file is too big to be opened. Please download the file instead.')], Http::STATUS_BAD_REQUEST);
 				}
@@ -98,6 +107,15 @@ class FileHandlingController extends Controller{
 		}
 	}
 
+    /**
+     * save mind map file
+     *
+     * @NoAdminRequired
+     *
+     * @param string $path
+     * @param string $filecontents
+     * @return DataResponse
+     */
 	public function save($path, $filecontents) {
 		try {
 			if($path !== '') {
