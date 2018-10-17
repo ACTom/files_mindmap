@@ -96,10 +96,10 @@ var FilesMindMap = {
 				}
 			})
 			.done(function(){
-				success('内容已保存')
+				success('Content saved')
 				self._changed = false;
 			}).fail(function(jqXHR){
-				var message = '保存失败';
+				var message = 'Save failed';
 				try{
 					message = JSON.parse(jqXHR.responseText).message;
 				}catch(e){
@@ -184,8 +184,8 @@ FilesMindMap.NewFileMenuPlugin = {
 		// register the new menu entry
 		menu.addMenuEntry({
 			id: 'mindmapfile',
-			displayName: '新建思维导图文件',
-			templateName: '新建思维导图.km',
+			displayName: 'New mind map file',
+			templateName: 'New_mind_map.km',
 			iconClass: 'icon-link',
 			fileType: 'mindmap',
 			actionHandler: function(name) {
