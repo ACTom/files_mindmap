@@ -78,7 +78,7 @@ redirectIfNotDisplayedInFrame();
 		save: function() {
 			var self = this;
 			if (self._changed) {
-				self.setStatusMessage('正在保存...');
+				self.setStatusMessage('Saving...');
 				var data = JSON.stringify(minder.exportJson());
 				window.parent.OCA.FilesMindMap.save(data, function(msg){
 					self.setStatusMessage(msg);
@@ -94,7 +94,7 @@ redirectIfNotDisplayedInFrame();
                             {"data":
                                 {"id":"bopmq"+String(Math.floor(Math.random() * 9e15)).substr(0, 7),
                                  "created":(new Date()).getTime(),
-                                 "text":"中心主题"
+                                 "text":"Central theme"
                                 },
                                 "children":[]
                             },
@@ -108,7 +108,7 @@ redirectIfNotDisplayedInFrame();
                     try {
                         obj = JSON.parse(data);
                     } catch (e){
-                        alert('此文件不是有效的思维导图文件，如果继续编辑可能导致文件损坏！');
+                        alert('This file is not a valid mind map file and may cause file corruption if you continue editing！');
                     }
                 }
 				minder.importJson(obj);
@@ -116,7 +116,7 @@ redirectIfNotDisplayedInFrame();
 				self._changed = false;
 			}, function(msg){
 				self._loadStatus = false;
-				alert('载入文件失败！' + msg);
+				alert('Loading the file failed!' + msg);
 				window.parent.OCA.FilesMindMap.hide();
 			});
 		},
