@@ -108,18 +108,18 @@
 <div id="export-button" class="btn-group-vertical" dropdown is-open="isopen">
     <button type="button"
             class="btn btn-default export-caption dropdown-toggle"
-            title="{{ 'export' | lang:'ui' }}"
+            title="<?php p($l->t('Export')); ?>"
             dropdown-toggle>
-        <span class="caption">{{ 'export' | lang:'ui' }}</span>
+        <span class="caption"><?php p($l->t('Export')); ?></span>
         <span class="caret"></span>
-        <span class="sr-only">{{ 'export' | lang:'ui' }}</span>
+        <span class="sr-only"><?php p($l->t('Export')); ?></span>
     </button>
     <ul class="dropdown-menu" role="menu">
         <li>
-            <a id="export-png" href">{{ 'exportPNG' | lang:'ui/command' }}</a>
+            <a id="export-png" href"><?php p($l->t('Export to PNG')); ?></a>
         </li>
         <li>
-            <a id="export-svg" href">{{ 'exportSVG' | lang:'ui/command' }}</a>
+            <a id="export-svg" href"><?php p($l->t('Export to SVG')); ?></a>
         </li>
     </ul>
 </div>
@@ -142,7 +142,6 @@
 <script nonce="<?php p(\OC::$server->getContentSecurityPolicyNonceManager()->getNonce()) ?>" src="<?php p($urlGenerator->linkTo('files_mindmap', 'vendor/marked/lib/marked.js')) ?>?v=<?php p($version) ?>"></script>
 <script nonce="<?php p(\OC::$server->getContentSecurityPolicyNonceManager()->getNonce()) ?>" src="<?php p($urlGenerator->linkTo('files_mindmap', 'vendor/kity/dist/kity.min.js')) ?>?v=<?php p($version) ?>"></script>
 <script nonce="<?php p(\OC::$server->getContentSecurityPolicyNonceManager()->getNonce()) ?>" src="<?php p($urlGenerator->linkTo('files_mindmap', 'vendor/hotbox/hotbox.js')) ?>?v=<?php p($version) ?>"></script>
-<script nonce="<?php p(\OC::$server->getContentSecurityPolicyNonceManager()->getNonce()) ?>" src="<?php p($urlGenerator->linkTo('files_mindmap', 'vendor/json-diff/json-diff.js')) ?>?v=<?php p($version) ?>"></script>
 <script nonce="<?php p(\OC::$server->getContentSecurityPolicyNonceManager()->getNonce()) ?>" src="<?php p($urlGenerator->linkTo('files_mindmap', 'vendor/kityminder-core/dist/kityminder.core.min.js')) ?>?v=<?php p($version) ?>"></script>
 <script nonce="<?php p(\OC::$server->getContentSecurityPolicyNonceManager()->getNonce()) ?>" src="<?php p($urlGenerator->linkTo('files_mindmap', 'vendor/color-picker/dist/color-picker.min.js')) ?>?v=<?php p($version) ?>"></script>
 <script nonce="<?php p(\OC::$server->getContentSecurityPolicyNonceManager()->getNonce()) ?>" src="<?php p($urlGenerator->linkTo('files_mindmap', 'vendor/js-base64/base64.min.js')) ?>?v=<?php p($version) ?>"></script>
