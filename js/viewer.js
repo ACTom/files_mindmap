@@ -21,15 +21,16 @@ redirectIfNotDisplayedInFrame();
 		init: function() {
 			var self = this;
 			angular.module('mindmap', ['kityminderEditor'])
-			/*.config(function (configProvider) {
-				configProvider.set('imageUpload', '../server/imageUpload.php');
-			})*/
+			.config(function (configProvider) {
+				configProvider.set('defaultLang', lang);
+			})
 			.controller('MainController', function($scope) {
 				$scope.initEditor = function(editor, minder) {
 					window.editor = editor;
 					window.minder = minder;
 
 					self.initHotkey();
+					self.bindEvent();
 					self.loadData();
 					self.startSaveTimer();
 					minder.on('contentchange', function(e) { 
@@ -47,6 +48,15 @@ redirectIfNotDisplayedInFrame();
 					return false;
 				}
 			});
+		},
+		bindEvent: function() {
+			var self = this;
+			$('#export-png').click(function(){
+				self.exportPNG();
+			});
+            $('#export-svg').click(function(){
+                self.exportSVG();
+            });
 		},
 		startSaveTimer: function() {
 			var self = this;
@@ -128,6 +138,33 @@ redirectIfNotDisplayedInFrame();
 			}
 			return url.substr(i, 5).toLowerCase() === 'data:';
 		},
+
+        download: function(url, filename) {
+			var obj = document.createElement('a');
+			obj.href = url;
+			obj.download = filename;
+			obj.dataset.downloadurl = url;
+			document.body.appendChild(obj);
+			obj.click();
+			document.body.removeChild(obj)
+		},
+
+        exportPNG: function () {
+			var self = this;
+            minder.exportData('png').then(function (data) {
+            	self.download(data, 'export.png');
+            });
+        },
+
+        exportSVG: function () {
+            var self = this;
+            minder.exportData('svg').then(function (data) {
+                var url = 'data:image/svg+xml;base64,' + Base64.encode(data);
+                self.download(url, 'export.svg');
+            }, function (data){
+                console.log('fail', data);
+            });
+        },
 
 		getFileNameFromURL: function (url) {
 			var defaultFilename = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'mindfile.kmp';

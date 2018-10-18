@@ -3,6 +3,7 @@
   /** @var OCP\IURLGenerator $urlGenerator */
   $urlGenerator = $_['urlGenerator'];
   $version = \OC::$server->getAppManager()->getAppVersion('files_mindmap');
+  $lang = $_['lang'];
 ?>
 <!DOCTYPE html>
 <html>
@@ -85,17 +86,43 @@
             opacity: 0.8;
             outline: none;
         }
-		#status-message {
-			position: absolute;
-			right: 100px;
-			top:6px;
-			z-index: 100000;
-		}
+        #status-message {
+            position: absolute;
+            right: 120px;
+            top:6px;
+            z-index: 100000;
+        }
+        #export-button {
+            position: absolute;
+            right: 40px;
+            z-index: 100000;
+        }
 	</style>
 </head>
+<script nonce="<?php p(\OC::$server->getContentSecurityPolicyNonceManager()->getNonce()) ?>">
+    var lang = '<?=$lang?>';
+</script>
 <body ng-app="mindmap" ng-controller="MainController">
 <a id="close-button" href="javascript:void(0);">×</a>
 <span id="status-message"></span>
+<div id="export-button" class="btn-group-vertical" dropdown is-open="isopen">
+    <button type="button"
+            class="btn btn-default export-caption dropdown-toggle"
+            title="{{ 'export' | lang:'ui' }}"
+            dropdown-toggle>
+        <span class="caption">{{ 'export' | lang:'ui' }}</span>
+        <span class="caret"></span>
+        <span class="sr-only">{{ 'export' | lang:'ui' }}</span>
+    </button>
+    <ul class="dropdown-menu" role="menu">
+        <li>
+            <a id="export-png" href">{{ 'exportPNG' | lang:'ui/command' }}</a>
+        </li>
+        <li>
+            <a id="export-svg" href">{{ 'exportSVG' | lang:'ui/command' }}</a>
+        </li>
+    </ul>
+</div>
 <kityminder-editor id="viewer" on-init="initEditor(editor, minder)"></kityminder-editor>
 </body>
 
