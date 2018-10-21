@@ -26,7 +26,7 @@ redirectIfNotDisplayedInFrame();
 			var self = this;
 			angular.module('mindmap', ['kityminderEditor'])
 			.config(function (configProvider) {
-				configProvider.set('defaultLang', lang);
+				configProvider.set('lang', lang);
 			})
 			.controller('MainController', function($scope) {
 				$scope.initEditor = function(editor, minder) {
