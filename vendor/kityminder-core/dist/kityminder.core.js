@@ -1,9 +1,9 @@
 /*!
  * ====================================================
- * kityminder - v1.4.45 - 2017-08-09
+ * Kity Minder Core - v1.4.50 - 2018-10-23
  * https://github.com/fex-team/kityminder-core
  * GitHub: https://github.com/fex-team/kityminder-core.git 
- * Copyright (c) 2017 Baidu FEX; Licensed MIT
+ * Copyright (c) 2018 Baidu FEX; Licensed BSD-3-Clause
  * ====================================================
  */
 
@@ -3810,8 +3810,8 @@ _p[35] = {
         _p.r(46);
         _p.r(47);
         _p.r(48);
-        _p.r(49);
         _p.r(50);
+        _p.r(49);
         _p.r(51);
         _p.r(52);
         _p.r(53);
@@ -3825,23 +3825,24 @@ _p[35] = {
         _p.r(61);
         _p.r(62);
         _p.r(63);
-        _p.r(67);
         _p.r(64);
-        _p.r(66);
+        _p.r(68);
         _p.r(65);
+        _p.r(67);
+        _p.r(66);
         _p.r(40);
         _p.r(36);
         _p.r(37);
         _p.r(38);
         _p.r(39);
         _p.r(41);
-        _p.r(74);
+        _p.r(75);
+        _p.r(78);
         _p.r(77);
         _p.r(76);
-        _p.r(75);
-        _p.r(77);
-        _p.r(79);
         _p.r(78);
+        _p.r(80);
+        _p.r(79);
         _p.r(0);
         _p.r(1);
         _p.r(2);
@@ -3849,12 +3850,12 @@ _p[35] = {
         _p.r(4);
         _p.r(5);
         _p.r(6);
-        _p.r(68);
-        _p.r(72);
         _p.r(69);
-        _p.r(71);
-        _p.r(70);
         _p.r(73);
+        _p.r(70);
+        _p.r(72);
+        _p.r(71);
+        _p.r(74);
         module.exports = kityminder;
     }
 };
@@ -4446,7 +4447,7 @@ _p[43] = {
         var MinderNode = _p.r(21);
         var Command = _p.r(9);
         var Module = _p.r(20);
-        var TextRenderer = _p.r(60);
+        var TextRenderer = _p.r(61);
         Module.register("basestylemodule", function() {
             var km = this;
             function getNodeDataOrStyle(node, name) {
@@ -5317,7 +5318,7 @@ _p[47] = {
         var MinderNode = _p.r(21);
         var Command = _p.r(9);
         var Module = _p.r(20);
-        var TextRenderer = _p.r(60);
+        var TextRenderer = _p.r(61);
         function getNodeDataOrStyle(node, name) {
             return node.getData(name) || node.getStyle(name);
         }
@@ -5567,8 +5568,113 @@ _p[48] = {
     }
 };
 
-//src/module/image.js
+//src/module/image-viewer.js
 _p[49] = {
+    value: function(require, exports, module) {
+        var kity = _p.r(17);
+        var keymap = _p.r(15);
+        var Module = _p.r(20);
+        var Command = _p.r(9);
+        Module.register("ImageViewer", function() {
+            function createEl(name, classNames, children) {
+                var el = document.createElement(name);
+                addClass(el, classNames);
+                children && children.length && children.forEach(function(child) {
+                    el.appendChild(child);
+                });
+                return el;
+            }
+            function on(el, event, handler) {
+                el.addEventListener(event, handler);
+            }
+            function addClass(el, classNames) {
+                classNames && classNames.split(" ").forEach(function(className) {
+                    el.classList.add(className);
+                });
+            }
+            function removeClass(el, classNames) {
+                classNames && classNames.split(" ").forEach(function(className) {
+                    el.classList.remove(className);
+                });
+            }
+            var ImageViewer = kity.createClass("ImageViewer", {
+                constructor: function() {
+                    var btnClose = createEl("button", "km-image-viewer-btn km-image-viewer-close");
+                    var btnSource = createEl("button", "km-image-viewer-btn km-image-viewer-source");
+                    var image = this.image = createEl("img");
+                    var toolbar = this.toolbar = createEl("div", "km-image-viewer-toolbar", [ btnSource, btnClose ]);
+                    var container = createEl("div", "km-image-viewer-container", [ image ]);
+                    var viewer = this.viewer = createEl("div", "km-image-viewer", [ toolbar, container ]);
+                    this.hotkeyHandler = this.hotkeyHandler.bind(this);
+                    on(btnClose, "click", this.close.bind(this));
+                    on(btnSource, "click", this.viewSource.bind(this));
+                    on(image, "click", this.zoomImage.bind(this));
+                    on(viewer, "contextmenu", this.toggleToolbar.bind(this));
+                    on(document, "keydown", this.hotkeyHandler);
+                },
+                dispose: function() {
+                    this.close();
+                    document.removeEventListener("remove", this.hotkeyHandler);
+                },
+                hotkeyHandler: function(e) {
+                    if (!this.actived) {
+                        return;
+                    }
+                    if (e.keyCode === keymap["esc"]) {
+                        this.close();
+                    }
+                },
+                toggleToolbar: function(e) {
+                    e && e.preventDefault();
+                    this.toolbar.classList.toggle("hidden");
+                },
+                zoomImage: function(restore) {
+                    var image = this.image;
+                    if (typeof restore === "boolean") {
+                        restore && addClass(image, "limited");
+                    } else {
+                        image.classList.toggle("limited");
+                    }
+                },
+                viewSource: function(src) {
+                    window.open(this.image.src);
+                },
+                open: function(src) {
+                    var input = document.querySelector("input");
+                    if (input) {
+                        input.focus();
+                        input.blur();
+                    }
+                    this.image.src = src;
+                    this.zoomImage(true);
+                    document.body.appendChild(this.viewer);
+                    this.actived = true;
+                },
+                close: function() {
+                    this.image.src = "";
+                    document.body.removeChild(this.viewer);
+                    this.actived = false;
+                }
+            });
+            return {
+                init: function() {
+                    this.viewer = new ImageViewer();
+                },
+                events: {
+                    "normal.dblclick": function(e) {
+                        var shape = e.kityEvent.targetShape;
+                        if (shape.__KityClassName === "Image" && shape.url) {
+                            this.viewer.open(shape.url);
+                        }
+                    }
+                }
+            };
+        });
+    }
+};
+
+//src/module/image.js
+_p[50] = {
     value: function(require, exports, module) {
         var kity = _p.r(17);
         var utils = _p.r(33);
@@ -5690,7 +5796,7 @@ _p[49] = {
 };
 
 //src/module/keynav.js
-_p[50] = {
+_p[51] = {
     value: function(require, exports, module) {
         var kity = _p.r(17);
         var utils = _p.r(33);
@@ -5845,7 +5951,7 @@ _p[50] = {
  * @author: techird
  * @copyright: Baidu FEX, 2014
  */
-_p[51] = {
+_p[52] = {
     value: function(require, exports, module) {
         var kity = _p.r(17);
         var Command = _p.r(9);
@@ -5920,7 +6026,7 @@ _p[51] = {
 };
 
 //src/module/node.js
-_p[52] = {
+_p[53] = {
     value: function(require, exports, module) {
         var kity = _p.r(17);
         var utils = _p.r(33);
@@ -6070,7 +6176,7 @@ _p[52] = {
  * @author: techird
  * @copyright: Baidu FEX, 2014
  */
-_p[53] = {
+_p[54] = {
     value: function(require, exports, module) {
         var kity = _p.r(17);
         var utils = _p.r(33);
@@ -6168,7 +6274,7 @@ _p[53] = {
 };
 
 //src/module/outline.js
-_p[54] = {
+_p[55] = {
     value: function(require, exports, module) {
         var kity = _p.r(17);
         var utils = _p.r(33);
@@ -6285,7 +6391,7 @@ _p[54] = {
 };
 
 //src/module/priority.js
-_p[55] = {
+_p[56] = {
     value: function(require, exports, module) {
         var kity = _p.r(17);
         var utils = _p.r(33);
@@ -6411,7 +6517,7 @@ _p[55] = {
 };
 
 //src/module/progress.js
-_p[56] = {
+_p[57] = {
     value: function(require, exports, module) {
         var kity = _p.r(17);
         var utils = _p.r(33);
@@ -6536,7 +6642,7 @@ _p[56] = {
 };
 
 //src/module/resource.js
-_p[57] = {
+_p[58] = {
     value: function(require, exports, module) {
         var kity = _p.r(17);
         var utils = _p.r(33);
@@ -6596,7 +6702,7 @@ _p[57] = {
                     } else {
                         a += "耀";
                         while (a.length % 32 !== 27) {
-                            a += "\x00";
+                            a += "\0";
                         }
                         a += "";
                     }
@@ -6866,7 +6972,7 @@ _p[57] = {
 };
 
 //src/module/select.js
-_p[58] = {
+_p[59] = {
     value: function(require, exports, module) {
         var kity = _p.r(17);
         var utils = _p.r(33);
@@ -7011,7 +7117,7 @@ _p[58] = {
 };
 
 //src/module/style.js
-_p[59] = {
+_p[60] = {
     value: function(require, exports, module) {
         var kity = _p.r(17);
         var utils = _p.r(33);
@@ -7116,7 +7222,7 @@ _p[59] = {
 };
 
 //src/module/text.js
-_p[60] = {
+_p[61] = {
     value: function(require, exports, module) {
         var kity = _p.r(17);
         var utils = _p.r(33);
@@ -7138,7 +7244,7 @@ _p[60] = {
                 "impact,chicago": -.15,
                 "times new roman": -.1,
                 "arial black,avant garde": -.17,
-                "default": 0
+                default: 0
             },
             ie: {
                 10: {
@@ -7147,7 +7253,7 @@ _p[60] = {
                     "impact,chicago": -.08,
                     "times new roman": .04,
                     "arial black,avant garde": -.17,
-                    "default": -.15
+                    default: -.15
                 },
                 11: {
                     "微软雅黑,Microsoft YaHei": -.17,
@@ -7157,7 +7263,7 @@ _p[60] = {
                     "times new roman": .04,
                     "sans-serif": -.16,
                     "arial black,avant garde": -.17,
-                    "default": -.15
+                    default: -.15
                 }
             },
             edge: {
@@ -7167,7 +7273,7 @@ _p[60] = {
                 "impact,chicago": -.08,
                 "sans-serif": -.16,
                 "arial black,avant garde": -.17,
-                "default": -.15
+                default: -.15
             },
             sg: {
                 "微软雅黑,Microsoft YaHei": -.15,
@@ -7176,7 +7282,7 @@ _p[60] = {
                 "impact,chicago": -.16,
                 "times new roman": -.03,
                 "arial black,avant garde": -.22,
-                "default": -.15
+                default: -.15
             },
             chrome: {
                 Mac: {
@@ -7185,7 +7291,7 @@ _p[60] = {
                     "impact,chicago": -.13,
                     "times new roman": -.1,
                     "arial black,avant garde": -.17,
-                    "default": 0
+                    default: 0
                 },
                 Win: {
                     "微软雅黑,Microsoft YaHei": -.15,
@@ -7194,7 +7300,7 @@ _p[60] = {
                     "comic sans ms": -.2,
                     "impact,chicago": -.12,
                     "times new roman": -.02,
-                    "default": -.15
+                    default: -.15
                 },
                 Lux: {
                     "andale mono": -.05,
@@ -7202,7 +7308,7 @@ _p[60] = {
                     "impact,chicago": -.13,
                     "times new roman": -.1,
                     "arial black,avant garde": -.17,
-                    "default": 0
+                    default: 0
                 }
             },
             firefox: {
@@ -7213,7 +7319,7 @@ _p[60] = {
                     "impact,chicago": -.15,
                     "arial black,avant garde": -.17,
                     "times new roman": -.1,
-                    "default": .05
+                    default: .05
                 },
                 Win: {
                     "微软雅黑,Microsoft YaHei": -.16,
@@ -7224,7 +7330,7 @@ _p[60] = {
                     "times new roman": -.22,
                     "sans-serif": -.22,
                     "arial black,avant garde": -.17,
-                    "default": -.16
+                    default: -.16
                 },
                 Lux: {
                     "宋体,SimSun": -.2,
@@ -7239,7 +7345,7 @@ _p[60] = {
                     "times new roman": -.2,
                     "sans-serif": -.2,
                     "arial black,avant garde": -.2,
-                    "default": -.16
+                    default: -.16
                 }
             }
         };
@@ -7370,7 +7476,7 @@ _p[60] = {
 };
 
 //src/module/view.js
-_p[61] = {
+_p[62] = {
     value: function(require, exports, module) {
         var kity = _p.r(17);
         var utils = _p.r(33);
@@ -7692,7 +7798,7 @@ _p[61] = {
 };
 
 //src/module/zoom.js
-_p[62] = {
+_p[63] = {
     value: function(require, exports, module) {
         var kity = _p.r(17);
         var utils = _p.r(33);
@@ -7843,9 +7949,6 @@ _p[62] = {
                         if (!e.originEvent.ctrlKey && !e.originEvent.metaKey) return;
                         var delta = e.originEvent.wheelDelta;
                         var me = this;
-                        if (!kity.Browser.mac) {
-                            delta = -delta;
-                        }
                         // 稀释
                         if (Math.abs(delta) > 100) {
                             clearTimeout(this._wheelZoomTimeout);
@@ -7855,10 +7958,10 @@ _p[62] = {
                         this._wheelZoomTimeout = setTimeout(function() {
                             var value;
                             var lastValue = me.getPaper()._zoom || 1;
-                            if (delta < 0) {
-                                me.execCommand("zoom-in");
-                            } else if (delta > 0) {
-                                me.execCommand("zoom-out");
+                            if (delta > 0) {
+                                me.execCommand("zoomin");
+                            } else if (delta < 0) {
+                                me.execCommand("zoomout");
                             }
                         }, 100);
                         e.originEvent.preventDefault();
@@ -7874,7 +7977,7 @@ _p[62] = {
 };
 
 //src/protocol/json.js
-_p[63] = {
+_p[64] = {
     value: function(require, exports, module) {
         var data = _p.r(12);
         data.registerProtocol("json", module.exports = {
@@ -7893,13 +7996,13 @@ _p[63] = {
 };
 
 //src/protocol/markdown.js
-_p[64] = {
+_p[65] = {
     value: function(require, exports, module) {
         var data = _p.r(12);
         var LINE_ENDING_SPLITER = /\r\n|\r|\n/;
         var EMPTY_LINE = "";
-        var NOTE_MARK_START = "<!--Note-->";
-        var NOTE_MARK_CLOSE = "<!--/Note-->";
+        var NOTE_MARK_START = "\x3c!--Note--\x3e";
+        var NOTE_MARK_CLOSE = "\x3c!--/Note--\x3e";
         function encode(json) {
             return _build(json, 1).join("\n");
         }
@@ -8024,7 +8127,7 @@ _p[64] = {
 };
 
 //src/protocol/png.js
-_p[65] = {
+_p[66] = {
     value: function(require, exports, module) {
         var kity = _p.r(17);
         var data = _p.r(12);
@@ -8056,27 +8159,42 @@ _p[65] = {
      */
         function xhrLoadImage(info, callback) {
             return Promise(function(resolve, reject) {
-                var xmlHttp = new XMLHttpRequest();
-                xmlHttp.open("GET", info.url + "?_=" + Date.now(), true);
-                xmlHttp.responseType = "blob";
-                xmlHttp.onreadystatechange = function() {
-                    if (xmlHttp.readyState === 4 && xmlHttp.status === 200) {
-                        var blob = xmlHttp.response;
-                        var image = document.createElement("img");
-                        image.src = DomURL.createObjectURL(blob);
-                        image.onload = function() {
-                            DomURL.revokeObjectURL(image.src);
-                            resolve({
-                                element: image,
-                                x: info.x,
-                                y: info.y,
-                                width: info.width,
-                                height: info.height
-                            });
-                        };
-                    }
-                };
-                xmlHttp.send();
+                if (info.url.indexOf("data:") === 0) {
+                    var image = document.createElement("img");
+                    image.src = info.url;
+                    image.onload = function() {
+                        DomURL.revokeObjectURL(image.src);
+                        resolve({
+                            element: image,
+                            x: info.x,
+                            y: info.y,
+                            width: info.width,
+                            height: info.height
+                        });
+                    };
+                } else {
+                    var xmlHttp = new XMLHttpRequest();
+                    xmlHttp.open("GET", info.url + "?_=" + Date.now(), true);
+                    xmlHttp.responseType = "blob";
+                    xmlHttp.onreadystatechange = function() {
+                        if (xmlHttp.readyState === 4 && xmlHttp.status === 200) {
+                            var blob = xmlHttp.response;
+                            var image = document.createElement("img");
+                            image.src = DomURL.createObjectURL(blob);
+                            image.onload = function() {
+                                DomURL.revokeObjectURL(image.src);
+                                resolve({
+                                    element: image,
+                                    x: info.x,
+                                    y: info.y,
+                                    width: info.width,
+                                    height: info.height
+                                });
+                            };
+                        }
+                    };
+                    xmlHttp.send();
+                }
             });
         }
         function getSVGInfo(minder) {
@@ -8102,8 +8220,8 @@ _p[65] = {
             svgXml = svgContainer.innerHTML;
             // Dummy IE
             svgXml = svgXml.replace(' xmlns="http://www.w3.org/2000/svg" ' + 'xmlns:NS1="" NS1:ns1:xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:NS2="" NS2:xmlns:ns1=""', "");
-            // svg 含有 &nbsp; 符号导出报错 Entity 'nbsp' not defined
-            svgXml = svgXml.replace(/&nbsp;/g, "&#xa0;");
+            // svg 含有 &nbsp; 符号导出报错 Entity 'nbsp' not defined ,含有控制字符触发Load Image 会触发报错
+            svgXml = svgXml.replace(/&nbsp;|[\x00-\x1F\x7F-\x9F]/g, "");
             // fix title issue in safari
             // @ http://stackoverflow.com/questions/30273775/namespace-prefix-ns1-for-href-on-tagelement-is-not-defined-setattributens
             svgXml = svgXml.replace(/NS\d+:title/gi, "xlink:title");
@@ -8244,7 +8362,7 @@ _p[65] = {
 };
 
 //src/protocol/svg.js
-_p[66] = {
+_p[67] = {
     value: function(require, exports, module) {
         var data = _p.r(12);
         /**
@@ -8516,7 +8634,7 @@ _p[66] = {
 };
 
 //src/protocol/text.js
-_p[67] = {
+_p[68] = {
     value: function(require, exports, module) {
         var data = _p.r(12);
         var Browser = _p.r(17).Browser;
@@ -8528,8 +8646,8 @@ _p[67] = {
         var LINE_ENDING = "\r", LINE_ENDING_SPLITER = /\r\n|\r|\n/, TAB_CHAR = function(Browser) {
             if (Browser.gecko) {
                 return {
-                    REGEXP: new RegExp("^(	|" + String.fromCharCode(160, 160, 32, 160) + ")"),
-                    DELETE: new RegExp("^(	|" + String.fromCharCode(160, 160, 32, 160) + ")+")
+                    REGEXP: new RegExp("^(\t|" + String.fromCharCode(160, 160, 32, 160) + ")"),
+                    DELETE: new RegExp("^(\t|" + String.fromCharCode(160, 160, 32, 160) + ")+")
                 };
             } else if (Browser.ie || Browser.edge) {
                 // ie系列和edge比较特别，\t在div中会被直接转义成SPACE故只好使用SPACE来做处理
@@ -8645,7 +8763,7 @@ _p[67] = {
         function encode(json, level) {
             var local = "";
             level = level || 0;
-            local += repeat("	", level);
+            local += repeat("\t", level);
             local += encodeWrap(json.data.text) + LINE_ENDING;
             if (json.children) {
                 json.children.forEach(function(child) {
@@ -8747,7 +8865,7 @@ _p[67] = {
  * @author: techird
  * @copyright: Baidu FEX, 2014
  */
-_p[68] = {
+_p[69] = {
     value: function(require, exports, module) {
         var template = _p.r(31);
         template.register("default", {
@@ -8781,7 +8899,7 @@ _p[68] = {
  * @author: techird
  * @copyright: Baidu FEX, 2014
  */
-_p[69] = {
+_p[70] = {
     value: function(require, exports, module) {
         var template = _p.r(31);
         template.register("filetree", {
@@ -8809,7 +8927,7 @@ _p[69] = {
  * @author: techird
  * @copyright: Baidu FEX, 2014
  */
-_p[70] = {
+_p[71] = {
     value: function(require, exports, module) {
         var template = _p.r(31);
         template.register("fish-bone", {
@@ -8851,7 +8969,7 @@ _p[70] = {
  * @author: techird
  * @copyright: Baidu FEX, 2014
  */
-_p[71] = {
+_p[72] = {
     value: function(require, exports, module) {
         var template = _p.r(31);
         template.register("right", {
@@ -8875,7 +8993,7 @@ _p[71] = {
  * @author: techird
  * @copyright: Baidu FEX, 2014
  */
-_p[72] = {
+_p[73] = {
     value: function(require, exports, module) {
         var template = _p.r(31);
         template.register("structure", {
@@ -8898,7 +9016,7 @@ _p[72] = {
  * @author: along
  * @copyright: bpd729@163.com, 2015
  */
-_p[73] = {
+_p[74] = {
     value: function(require, exports, module) {
         var template = _p.r(31);
         template.register("tianpan", {
@@ -8919,7 +9037,7 @@ _p[73] = {
 };
 
 //src/theme/default.js
-_p[74] = {
+_p[75] = {
     value: function(require, exports, module) {
         var theme = _p.r(32);
         [ "classic", "classic-compact" ].forEach(function(name) {
@@ -8978,7 +9096,7 @@ _p[74] = {
 };
 
 //src/theme/fish.js
-_p[75] = {
+_p[76] = {
     value: function(require, exports, module) {
         var theme = _p.r(32);
         theme.register("fish", {
@@ -9029,7 +9147,7 @@ _p[75] = {
 };
 
 //src/theme/fresh.js
-_p[76] = {
+_p[77] = {
     value: function(require, exports, module) {
         var kity = _p.r(17);
         var theme = _p.r(32);
@@ -9098,7 +9216,7 @@ _p[76] = {
 };
 
 //src/theme/snow.js
-_p[77] = {
+_p[78] = {
     value: function(require, exports, module) {
         var theme = _p.r(32);
         [ "snow", "snow-compact" ].forEach(function(name) {
@@ -9153,7 +9271,7 @@ _p[77] = {
 };
 
 //src/theme/tianpan.js
-_p[78] = {
+_p[79] = {
     value: function(require, exports, module) {
         var theme = _p.r(32);
         [ "tianpan", "tianpan-compact" ].forEach(function(name) {
@@ -9215,7 +9333,7 @@ _p[78] = {
 };
 
 //src/theme/wire.js
-_p[79] = {
+_p[80] = {
     value: function(require, exports, module) {
         var theme = _p.r(32);
         theme.register("wire", {
