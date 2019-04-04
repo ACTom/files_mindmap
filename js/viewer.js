@@ -44,6 +44,12 @@ redirectIfNotDisplayedInFrame();
 					});
 				};
 			});
+
+			angular.module('ui.colorpicker')
+        		.config(function (localizeProvider) {
+                		localizeProvider.setDefaultLang('en-us');
+     			}) ;
+
 		},
 		initHotkey: function() {
 			var self = this;
