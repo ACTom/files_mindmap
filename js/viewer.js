@@ -111,6 +111,7 @@ redirectIfNotDisplayedInFrame();
 			}
 		},
 		loadData: function() {
+			var self = this;
 			window.parent.OCA.FilesMindMap.load(function(data){
                 var obj = {"root":
                             {"data":
@@ -134,6 +135,10 @@ redirectIfNotDisplayedInFrame();
                     }
                 }
 				minder.importJson(obj);
+				if (data === ' ') {
+					self._changed = true;
+					self.save();
+				}
 				self._loadStatus = true;
 				self._changed = false;
 			}, function(msg){

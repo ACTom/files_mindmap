@@ -18,6 +18,8 @@ var FilesMindMap = {
 
 		// replace the controls with our own
 		$('#app-content #controls').removeClass('hidden');
+
+		this._fileList.addAndFetchFileInfo(this._file.dir + '/' + this._file.name, '');
 	},
 
 	/**
@@ -53,6 +55,9 @@ var FilesMindMap = {
 
 		$('#mmframe').load(function(){
 			var iframe = $('#mmframe').contents();
+
+			OC.Apps.hideAppSidebar();
+
 			iframe.save = function() {
 				alert('save');
 			};
@@ -187,7 +192,7 @@ FilesMindMap.NewFileMenuPlugin = {
 			displayName: t('files_mindmap', 'New mind map file'),
 			templateName: t('files_mindmap', 'New mind map.km'),
 			iconClass: 'icon-link',
-			fileType: 'mindmap',
+			fileType: 'application/km',
 			actionHandler: function(name) {
 				var dir = fileList.getCurrentDirectory();
 				fileList.createFile(name).then(function() {
