@@ -88,7 +88,7 @@
         }
         #status-message {
             position: absolute;
-            right: 120px;
+            right: 200px;
             top:6px;
             z-index: 100000;
         }
