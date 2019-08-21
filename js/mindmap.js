@@ -14,12 +14,18 @@ var FilesMindMap = {
 			$('footer').removeClass('hidden');
 		}
 
-		FileList.setViewerMode(false);
+		if (!$('#mimetype').val()) {
+			FileList.setViewerMode(false);
+		}
 
 		// replace the controls with our own
 		$('#app-content #controls').removeClass('hidden');
 
-		this._fileList.addAndFetchFileInfo(this._file.dir + '/' + this._file.name, '');
+		if (!$('#mimetype').val()) {
+			this._fileList.addAndFetchFileInfo(this._file.dir + '/' + this._file.name, '');
+		} else {
+			//TODO
+		}
 	},
 
 	/**
@@ -33,8 +39,10 @@ var FilesMindMap = {
 		var viewer = OC.generateUrl('/apps/files_mindmap/');
 		$iframe = $('<iframe id="mmframe" style="width:100%;height:100%;display:block;position:absolute;top:0;z-index:1041;" src="'+viewer+'" sandbox="allow-scripts allow-same-origin allow-popups allow-modals allow-top-navigation" allowfullscreen="true"/>');
 
-		FileList.setViewerMode(true);
-		
+		if (!$('#mimetype').val()) {
+			FileList.setViewerMode(true);
+		}
+
 		if ($('#isPublic').val()) {
 			// force the preview to adjust its height
 			$('#preview').append($iframe).css({height: '100%'});
@@ -87,46 +95,62 @@ var FilesMindMap = {
 	},
 
 	save: function(data, success, fail) {
-		var url = OC.generateUrl('/apps/files_mindmap/ajax/savefile');
+		var url = '';
 		var path = this._file.dir + '/' + this._file.name;
 		if (this._file.dir === '/') {
 			path = '/' + this._file.name;
 		}
+		var putObject = {
+			filecontents: data,
+			path: path
+		};
+
+		if ($('#isPublic').val()){
+			putObject.token = $('#sharingToken').val();
+			url = OC.generateUrl('/apps/files_mindmap/share/save');
+			if ($('#mimetype').val() === 'application/km') {
+				putObject.path = '';
+			}
+		} else {
+			url = OC.generateUrl('/apps/files_mindmap/ajax/savefile');
+		}
+
+
 		$.ajax({
-				type: 'PUT',
-				url: url,
-				data: {
-					filecontents: data,
-					path: path
-				}
-			})
-			.done(function(){
-				success(t('files_mindmap', 'File Saved'))
-				self._changed = false;
-			}).fail(function(jqXHR){
-				var message = t('files_mindmap', 'Save failed');
-				try{
-					message = JSON.parse(jqXHR.responseText).message;
-				}catch(e){
-				}
-				fail(message);
-			});
+			type: 'PUT',
+			url: url,
+			data: putObject
+		}).done(function(){
+			success(t('files_mindmap', 'File Saved'));
+		}).fail(function(jqXHR){
+			var message = t('files_mindmap', 'Save failed');
+			try{
+				message = JSON.parse(jqXHR.responseText).message;
+			}catch(e){}
+			fail(message);
+		});
 	},
 
 	load: function(success, failure) {
 		var filename = this._file.name;
 		var dir = this._file.dir;
-		$.get(
-			OC.generateUrl('/apps/files_mindmap/ajax/loadfile'),
-			{
-				filename: filename,
-				dir: dir
-			}
-		).done(function(data) {
-			// Call success callback
+		var url = '';
+		var sharingToken = '';
+		if ($('#isPublic').val() && $('#mimetype').val() === 'application/km') {
+			sharingToken = $('#sharingToken').val();
+			url = OC.generateUrl('/apps/files_mindmap/public/{token}', {token: sharingToken});
+		} else if ($('#isPublic').val()) {
+			sharingToken = $('#sharingToken').val();
+			url = OC.generateUrl('/apps/files_mindmap/public/{token}?dir={dir}&filename={filename}', { token: sharingToken, filename: filename, dir: dir})
+			//url = this._currentContext.fileList.getDownloadUrl(filename, dir);
+		} else {
+			url = OC.generateUrl('/apps/files_mindmap/ajax/loadfile?filename={filename}&dir={dir}', {filename: filename, dir: dir});
+		}
+		$.get(url).done(function(data) {
 			OCA.FilesMindMap._file.writeable = data.writeable;
 			OCA.FilesMindMap._file.mime = data.mime;
 			OCA.FilesMindMap._file.mtime = data.mtime;
+
 			success(data.filecontents);
 		}).fail(function(jqXHR) {
 			failure(JSON.parse(jqXHR.responseText).message);
@@ -139,7 +163,7 @@ var FilesMindMap = {
 	 */
 	registerFileActions: function() {
 		var mimes = this.getSupportedMimetypes(),
-		_self = this;
+			_self = this;
 
 		$.each(mimes, function(key, value) {
 			OCA.Files.fileActions.registerAction({
@@ -216,7 +240,7 @@ OC.Plugins.register('OCA.Files.NewFileMenu', FilesMindMap.NewFileMenuPlugin);
 
 $(document).ready(function(){
 	OCA.FilesMindMap.init();
-	if ($('#isPublic').val() && $('#mimetype').val() === 'application/xmind') {
+	if ($('#isPublic').val() && $('#mimetype').val() === 'application/km') {
 		var sharingToken = $('#sharingToken').val();
 		var downloadUrl = OC.generateUrl('/s/{token}/download', {token: sharingToken});
 		var viewer = OCA.FilesMindMap;

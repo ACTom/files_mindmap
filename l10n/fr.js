@@ -11,6 +11,12 @@ OC.L10N.register(
         "Save failed": "Sauvegarde échouée",
         "Export": "Exporter",
         "Export to PNG": "Exporter en PNG",
-        "Export to SVG": "Exporter en SVG"
+        "Export to SVG": "Exporter en SVG",
+        "You are not permission to write this file":"You are not permission to write this file",
+        "File not found":"File not found",
+        "The file is locked.":"The file is locked.",
+        "Share not found":"Share not found",
+        "You are not authorized to open this share":"You are not authorized to open this share",
+        "Could not write to file.":"Could not write to file."
     },"nplurals=1; plural=0;"
 );
