@@ -127,6 +127,15 @@
         <li>
             <a id="export-svg" href"><?php p($l->t('Export to SVG')); ?></a>
         </li>
+        <li>
+            <a id="export-pdf" href"><?php p($l->t('Export to PDF')); ?></a>
+        </li>
+        <li>
+            <a id="export-markdown" href"><?php p($l->t('Export to Markdown')); ?></a>
+        </li>
+        <li>
+            <a id="export-text" href"><?php p($l->t('Export to Text')); ?></a>
+        </li>
     </ul>
 </div>
 <kityminder-editor id="viewer" on-init="initEditor(editor, minder)"></kityminder-editor>
@@ -155,5 +164,7 @@
 <script nonce="<?=$nonce?>" src="<?php p($urlGenerator->linkTo('files_mindmap', 'vendor/kityminder-editor/kityminder.editor.min.js')) ?>?v=<?php p($version) ?>"></script>
 
 <script nonce="<?=$nonce?>" src="<?php p($urlGenerator->linkTo('files_mindmap', 'js/viewer.js')) ?>?v=<?php p($version) ?>"></script>
+<script nonce="<?=$nonce?>" src="<?php p($urlGenerator->linkTo('files_mindmap', 'vendor/jsPDF/dist/jspdf.min.js')) ?>?v=<?php p($version) ?>"></script>
+<script nonce="<?=$nonce?>" src="<?php p($urlGenerator->linkTo('files_mindmap', 'vendor/svg2pdf.js/dist/svg2pdf.min.js')) ?>?v=<?php p($version) ?>"></script>
 </html>
 

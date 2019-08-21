@@ -17,6 +17,9 @@ OC.L10N.register(
         "The file is locked.":"文件被锁定",
         "Share not found":"共享未找到",
         "You are not authorized to open this share":"您没有权限打开这个共享",
-        "Could not write to file.":"无法写入文件。"
+        "Could not write to file.":"无法写入文件。",
+        "Export to Markdown":"导出为Markdown文本",
+        "Export to Text":"导出为Text文本",
+        "Export to PDF":"导出为PDF文件"
     },"nplurals=1; plural=0;"
 );

@@ -69,6 +69,15 @@ redirectIfNotDisplayedInFrame();
 			$('#export-svg').click(function(){
 				self.exportSVG();
 			});
+			$('#export-pdf').click(function(){
+				self.exportPDF();
+			});
+			$('#export-markdown').click(function(){
+				self.exportMarkdown();
+			});
+			$('#export-text').click(function(){
+				self.exportText();
+			});
 		},
 		startSaveTimer: function() {
 			var self = this;
@@ -182,6 +191,38 @@ redirectIfNotDisplayedInFrame();
 				self.download(url, 'export.svg');
 			}, function (data){
 				console.error('export svg fail', data);
+			});
+		},
+
+		exportMarkdown: function () {
+			var self = this;
+			minder.exportData('markdown').then(function (data) {
+				var url = 'data:text/markdown;base64,' + Base64.encode(data);
+				self.download(url, 'export.md');
+			}, function (data){
+				console.error('export markdown fail', data);
+			});
+		},
+
+		exportText: function () {
+			var self = this;
+			minder.exportData('text').then(function (data) {
+				var url = 'data:text/plain;base64,' + Base64.encode(data);
+				self.download(url, 'export.txt');
+			}, function (data){
+				console.error('export text fail', data);
+			});
+		},
+
+		exportPDF: function () {
+			var self = this;
+			minder.exportData('png').then(function (data) {
+				var pdf = new jsPDF('p', 'mm', 'a4', false);
+				//pdf.addImage(data, 'png', 100, 200, 280, 210, undefined, 'none');
+				pdf.addImage(data, 'PNG', 5, 10, 200, 0, undefined, 'SLOW');
+				self.download(pdf.output('datauristring'), 'export.pdf');
+			}, function (data){
+				console.error('export png fail', data);
 			});
 		}
 	};
