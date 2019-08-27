@@ -12,14 +12,17 @@ OC.L10N.register(
         "Export": "导出",
         "Export to PNG": "导出为PNG图像",
         "Export to SVG": "导出为SVG图像",
-        "You are not permission to write this file":"您没有写入文件的权限",
-        "File not found":"文件未找到",
-        "The file is locked.":"文件被锁定",
-        "Share not found":"共享未找到",
-        "You are not authorized to open this share":"您没有权限打开这个共享",
-        "Could not write to file.":"无法写入文件。",
-        "Export to Markdown":"导出为Markdown文本",
-        "Export to Text":"导出为Text文本",
-        "Export to PDF":"导出为PDF文件"
-    },"nplurals=1; plural=0;"
+        "You are not permission to write this file": "您没有写入文件的权限",
+        "File not found": "文件未找到",
+        "The file is locked.": "文件被锁定",
+        "Share not found": "共享未找到",
+        "You are not authorized to open this share": "您没有权限打开这个共享",
+        "Could not write to file.": "无法写入文件。",
+        "Export to Markdown": "导出为Markdown文本",
+        "Export to Text": "导出为Text文本",
+        "Export to PDF": "导出为PDF文件",
+        "Save": "保存",
+        "The file has not been saved. Is it saved?": "该文件尚未保存，是否现在保存？",
+        "Unsaved file": "未保存的文件"
+    }, "nplurals=1; plural=0;"
 );

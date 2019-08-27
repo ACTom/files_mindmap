@@ -12,14 +12,17 @@ OC.L10N.register(
         "Export": "Exportovať",
         "Export to PNG": "Exportovať do formátu PNG",
         "Export to SVG": "Exportovať do formátu SVG",
-        "You are not permission to write this file":"You are not permission to write this file",
-        "File not found":"File not found",
-        "The file is locked.":"The file is locked.",
-        "Share not found":"Share not found",
-        "You are not authorized to open this share":"You are not authorized to open this share",
-        "Could not write to file.":"Could not write to file.",
-        "Export to Markdown":"Export to Markdown",
-        "Export to Text":"Export to Text",
-        "Export to PDF":"Export to PDF"
-    },"nplurals=1; plural=0;"
+        "You are not permission to write this file": "You are not permission to write this file",
+        "File not found": "File not found",
+        "The file is locked.": "The file is locked.",
+        "Share not found": "Share not found",
+        "You are not authorized to open this share": "You are not authorized to open this share",
+        "Could not write to file.": "Could not write to file.",
+        "Export to Markdown": "Export to Markdown",
+        "Export to Text": "Export to Text",
+        "Export to PDF": "Export to PDF",
+        "Save": "Save",
+        "The file has not been saved. Is it saved?": "The file has not been saved. Is it saved?",
+        "Unsaved file": "Unsaved file"
+    }, "nplurals=1; plural=0;"
 );

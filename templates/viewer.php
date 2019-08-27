@@ -92,12 +92,13 @@
             opacity: 0.8;
             outline: none;
         }
-        #status-message {
+        #save-div {
             position: absolute;
-            right: 200px;
-            top:6px;
+            right: 180px;
             z-index: 100000;
+            width: 60px;
         }
+
         #export-button {
             position: absolute;
             right: 40px;
@@ -110,7 +111,9 @@
 </script>
 <body ng-app="mindmap" ng-controller="MainController">
 <a id="close-button" href="javascript:void(0);">×</a>
-<span id="status-message"></span>
+<div id="save-div" class="btn-group-vertical" >
+<button id="save-button" type="button" class="btn btn-default export-caption dropdown-toggle" title="<?php p($l->t('Save')); ?>"><?php p($l->t('Save')); ?></button>
+</div>
 <div id="export-button" class="btn-group-vertical" dropdown is-open="isopen">
     <button type="button"
             class="btn btn-default export-caption dropdown-toggle"

@@ -6,6 +6,20 @@ var FilesMindMap = {
 		this.registerFileActions();
 	},
 
+	showMessage: function(msg, delay, t) {
+		var self = this;
+		delay = delay || 3000;
+		var id = OC.Notification.show(msg, t);
+		setTimeout(function(){
+			self.hideMessage(id);
+		}, delay);
+		return id;
+	},
+
+	hideMessage: function(id, t) {
+		OC.Notification.hide(id, t);
+	},
+
 	hide: function() {
 		$('#mmframe').remove();
 		if ($('#isPublic').val() && $('#filesApp').val()){
@@ -37,7 +51,9 @@ var FilesMindMap = {
 		var $iframe;
 		var shown = true;
 		var viewer = OC.generateUrl('/apps/files_mindmap/');
-		$iframe = $('<iframe id="mmframe" style="width:100%;height:100%;display:block;position:absolute;top:0;z-index:1041;" src="'+viewer+'" sandbox="allow-scripts allow-same-origin allow-popups allow-modals allow-top-navigation" allowfullscreen="true"/>');
+		$iframe = $('<iframe id="mmframe" style="width:100%;height:100%;display:block;position:absolute;top:0;' +
+            'z-index:1041;" src="'+viewer+'" sandbox="allow-scripts allow-same-origin allow-popups allow-modals ' +
+            'allow-top-navigation" allowfullscreen="true"/>');
 
 		if (!$('#mimetype').val()) {
 			FileList.setViewerMode(true);
@@ -67,16 +83,16 @@ var FilesMindMap = {
 			OC.Apps.hideAppSidebar();
 
 			iframe.save = function() {
-				alert('save');
+				window.alert('save');
 			};
 
-			iframe.find('#close-button').click(function() {
-				self.hide();
-			});
+			// iframe.find('#close-button').click(function() {
+			// 	self.hide();
+			// });
 
 			// Go back on ESC
 			$(document).keyup(function(e) {
-				if (shown && e.keyCode == 27) {
+				if (shown && e.keyCode === 27) {
 					shown = false;
 					self.hide();
 				}
@@ -88,7 +104,7 @@ var FilesMindMap = {
 		}
 
 		if(!$('html').hasClass('ie8')) {
-			$(window).one('popstate', function (e) {
+			$(window).one('popstate', function () {
 				self.hide();
 			});
 		}
@@ -141,10 +157,12 @@ var FilesMindMap = {
 			url = OC.generateUrl('/apps/files_mindmap/public/{token}', {token: sharingToken});
 		} else if ($('#isPublic').val()) {
 			sharingToken = $('#sharingToken').val();
-			url = OC.generateUrl('/apps/files_mindmap/public/{token}?dir={dir}&filename={filename}', { token: sharingToken, filename: filename, dir: dir})
+			url = OC.generateUrl('/apps/files_mindmap/public/{token}?dir={dir}&filename={filename}',
+                { token: sharingToken, filename: filename, dir: dir});
 			//url = this._currentContext.fileList.getDownloadUrl(filename, dir);
 		} else {
-			url = OC.generateUrl('/apps/files_mindmap/ajax/loadfile?filename={filename}&dir={dir}', {filename: filename, dir: dir});
+			url = OC.generateUrl('/apps/files_mindmap/ajax/loadfile?filename={filename}&dir={dir}',
+                {filename: filename, dir: dir});
 		}
 		$.get(url).done(function(data) {
 			OCA.FilesMindMap._file.writeable = data.writeable;

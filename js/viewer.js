@@ -38,8 +38,8 @@ redirectIfNotDisplayedInFrame();
 						self.initHotkey();
 						self.bindEvent();
 						self.loadData();
-						self.startSaveTimer();
-						minder.on('contentchange', function(e) {
+						//self.startSaveTimer();
+						minder.on('contentchange', function() {
 							self._changed = true;
 						});
 					};
@@ -54,7 +54,7 @@ redirectIfNotDisplayedInFrame();
 		initHotkey: function() {
 			var self = this;
 			$(document).keydown(function(e) {
-				if((e.ctrlKey || e.metaKey) && e.which == 83){
+				if((e.ctrlKey || e.metaKey) && e.which === 83){
 					self.save();
 					e.preventDefault();
 					return false;
@@ -78,35 +78,49 @@ redirectIfNotDisplayedInFrame();
 			$('#export-text').click(function(){
 				self.exportText();
 			});
-		},
-		startSaveTimer: function() {
-			var self = this;
-			self.stopSaveTimer();
-			self._saveTimer = setInterval(function(){
+			$('#save-button').click(function() {
 				self.save();
-			}, 10000);
+			});
+			$('#close-button').click(function() {
+				self.close();
+				return false;
+			});
 		},
-		stopSaveTimer: function() {
+		close: function() {
 			var self = this;
-			if (self._saveTimer != null) {
-				clearInterval(self._saveTimer);
+			if (this._changed) {
+				window.parent.OC.dialogs.confirm(t('The file has not been saved. Is it saved?'),
+					t('Unsaved file'), function(result){
+					if (result) {
+						self.save(function(){
+							window.parent.OCA.FilesMindMap.hide();
+						});
+					} else {
+						window.parent.OCA.FilesMindMap.hide();
+					}
+				},true);
+			} else {
+				window.parent.OCA.FilesMindMap.hide();
 			}
+		},
+		showMessage: function(msg, delay) {
+			return window.parent.OCA.FilesMindMap.showMessage(msg, delay);
+		},
+		hideMessage: function(id) {
+			return window.parent.OCA.FilesMindMap.hideMessage(id);
 		},
 		setStatusMessage: function(msg) {
-			$('#status-message').html(msg);
-			this.clearStatusMessage();
-		},
-		clearStatusMessage: function() {
 			var self = this;
-			if (self._clearStatusMessageTimer != null) {
-				clearTimeout(self._clearStatusMessageTimer);
+			if (this._clearStatusMessageTimer !== null) {
+				this.hideMessage(this._clearStatusMessageTimer);
 			}
-			self._clearStatusMessageTimer = setTimeout(function(){
-				$('#status-message').html('');
+			this._clearStatusMessageTimer = this.showMessage(msg);
+			setTimeout(function(){
+				self.hideMessage(self._clearStatusMessageTimer);
 				self._clearStatusMessageTimer = null;
 			}, 3000);
 		},
-		save: function() {
+		save: function(callback) {
 			var self = this;
 			if (self._changed) {
 				self.setStatusMessage(t('Saving...'));
@@ -114,8 +128,14 @@ redirectIfNotDisplayedInFrame();
 				window.parent.OCA.FilesMindMap.save(data, function(msg){
 					self.setStatusMessage(msg);
 					self._changed = false;
+					if (undefined !== callback) {
+						callback(true, msg);
+					}
 				}, function(msg){
 					self.setStatusMessage(msg);
+					if (undefined !== callback) {
+						callback(false, msg);
+					}
 				});
 			}
 		},
@@ -140,7 +160,8 @@ redirectIfNotDisplayedInFrame();
 					try {
 						obj = JSON.parse(data);
 					} catch (e){
-						alert(t('This file is not a valid mind map file and may cause file corruption if you continue editing.'));
+						window.alert(t('This file is not a valid mind map file and may cause file ' +
+							'corruption if you continue editing.'));
 					}
 				}
 				minder.importJson(obj);
@@ -152,7 +173,7 @@ redirectIfNotDisplayedInFrame();
 				self._changed = false;
 			}, function(msg){
 				self._loadStatus = false;
-				alert(t('Load file fail!') + msg);
+				window.alert(t('Load file fail!') + msg);
 				window.parent.OCA.FilesMindMap.hide();
 			});
 		},
@@ -172,7 +193,7 @@ redirectIfNotDisplayedInFrame();
 			obj.dataset.downloadurl = url;
 			document.body.appendChild(obj);
 			obj.click();
-			document.body.removeChild(obj)
+			document.body.removeChild(obj);
 		},
 
 		exportPNG: function () {
@@ -230,4 +251,4 @@ redirectIfNotDisplayedInFrame();
 	window.MindMap = MindMap;
 })();
 
-MindMap.init();
+window.MindMap.init();
