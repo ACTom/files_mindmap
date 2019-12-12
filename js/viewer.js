@@ -17,7 +17,9 @@ redirectIfNotDisplayedInFrame();
 		return window.parent.t('files_mindmap', msg);
 	};
 
-	var lang = window.lang || 'en';
+	var lang = window.lang || 
+				 (document.getElementById("viewer") && document.getElementById("viewer").getAttribute("lang")) ||
+				 'en';
 
 	var MindMap = {
 		_changed: false,
