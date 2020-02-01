@@ -21,5 +21,9 @@ OC.L10N.register(
         "Export to Markdown":"Esporta in Markdown",
         "Export to Text":"Export to Text":"Esporta in Testo",
         "Export to PDF":"Esporta in PDF"
-    },"nplurals=1; plural=0;"
-);
+        "Save": "Salva",
+        "The file has not been saved. Is it saved?": "Il file non è stato salvato. È salvato?",
+        "Unsaved file": "File non salvato"
+    },
+    "nplurals=1; plural=0;"
+  }
