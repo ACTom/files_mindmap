@@ -141,7 +141,7 @@
         </li>
     </ul>
 </div>
-<kityminder-editor id="viewer" on-init="initEditor(editor, minder)"></kityminder-editor>
+<kityminder-editor id="viewer" lang="<?=$lang?>" on-init="initEditor(editor, minder)"></kityminder-editor>
 </body>
 
 <script nonce="<?=$nonce?>" src="<?php p($urlGenerator->linkTo('files_mindmap', 'vendor/jquery/dist/jquery.js')) ?>?v=<?php p($version) ?>"></script>
