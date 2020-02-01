@@ -20,8 +20,8 @@ OC.L10N.register(
         "Could not write to file.":"Impossibile scrivere sul file.",
         "Export to Markdown":"Esporta in Markdown",
         "Export to Text":"Export to Text":"Esporta in Testo",
-        "Export to PDF":"Esporta in PDF"
-        "Save": "Salva",
+        "Export to PDF":"Esporta in PDF",
+        "Save":"Salva",
         "The file has not been saved. Is it saved?": "Il file non è stato salvato. È salvato?",
         "Unsaved file": "File non salvato"
     },
