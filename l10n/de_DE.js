@@ -8,7 +8,7 @@ OC.L10N.register(
         "Load file fail!": "Datei laden fehlgeschlagen!",
         "File Saved": "Datei gespeichert",
         "Save failed": "Speichern fehlgeschlagen",
-        "Export": "Exportien",
+        "Export": "Exportieren",
         "Export to PNG": "Exportieren als PNG",
         "Export to SVG": "Exportieren als SVG",
         "You are not permission to write this file": "Sie haben keine Berechtigung in diese Datei zu schreiben",
