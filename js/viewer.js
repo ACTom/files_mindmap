@@ -144,7 +144,7 @@ redirectIfNotDisplayedInFrame();
 				if (self.getAutoSaveStatus()) {
 					self.save();
 				}
-			}, 5000);
+			}, 10000);
 		},
 		getAutoSaveStatus: function() {
 			var status = $('#autosave-checkbox').is(':checked');

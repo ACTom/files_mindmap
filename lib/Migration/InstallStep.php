@@ -30,15 +30,17 @@ class InstallStep implements IRepairStep {
     * @param IOutput $output
     */
     public function run(IOutput $output) {
-            $configDir = \OC::$configDir;
-            $mimetypealiasesFile = $configDir . 'mimetypealiases.json';
-            $mimetypemappingFile = $configDir . 'mimetypemapping.json';
+        $configDir = \OC::$configDir;
+        $mimetypealiasesFile = $configDir . 'mimetypealiases.json';
+        $mimetypemappingFile = $configDir . 'mimetypemapping.json';
 
-            $this->appendToFile($mimetypealiasesFile, ['application/km' => 'mindmap']);
-            $this->appendToFile($mimetypemappingFile, ['km' => ['application/km']]);
-            $this->logger->info("Add .km to mimetype list.", ["app" => "files_mindmap"]);
-            
-            $this->updateJS->run(new StringInput(''), new NullOutput());
+        $this->appendToFile($mimetypealiasesFile, ['application/km' => 'mindmap']);
+        $this->appendToFile($mimetypemappingFile, ['km' => ['application/km']]);
+        $this->logger->info("Add .km to mimetype list.", ["app" => "files_mindmap"]);
+        $this->updateJS->run(new StringInput(''), new NullOutput());
+        
+        $this->logger->info("Copy mindmap icon to core/img directory.", ["app" => "files_mindmap"]);
+        copy(__DIR__ . '/../../img/mindmap.svg', \OC::$SERVERROOT . '/core/img/filetypes/mindmap.svg');
     }
 
     private function appendToFile(string $filename, array $data) {

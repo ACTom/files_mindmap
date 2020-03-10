@@ -4,6 +4,7 @@ var FilesMindMap = {
 	_fileList: null,
 	init: function() {
 		this.registerFileActions();
+		this.hackFileIcon();
 	},
 
 	showMessage: function(msg, delay, t) {
@@ -197,6 +198,32 @@ var FilesMindMap = {
 		});
 	},
 
+	hackFileIcon: function() {
+		var changeMindmapIcons = function() {
+			$("#filestable")
+			.find("tr[data-type=file]")
+			.each(function () {
+				if (($(this).attr("data-mime") == "application/km") 
+					&& ($(this).find("div.thumbnail").length > 0)) {
+						if ($(this).find("div.thumbnail").hasClass("icon-mindmap") == false) {
+							$(this).find("div.thumbnail").addClass("icon icon-mindmap");
+						}
+					}
+			});
+		}
+
+		if ($('#filesApp').val()) {
+			$('#app-content-files')
+			.add('#app-content-extstoragemounts')
+			.on('changeDirectory', function (e) {
+				changeMindmapIcons();
+			})
+			.on('fileActionsReady', function (e) {
+				changeMindmapIcons();
+			});
+        }
+	},
+
 	_onEditorTrigger: function(fileName, context) {
 		this._currentContext = context;
 		this._file.name = fileName;
@@ -233,7 +260,7 @@ FilesMindMap.NewFileMenuPlugin = {
 			id: 'mindmapfile',
 			displayName: t('files_mindmap', 'New mind map file'),
 			templateName: t('files_mindmap', 'New mind map.km'),
-			iconClass: 'icon-link',
+			iconClass: 'icon-mindmap',
 			fileType: 'application/km',
 			actionHandler: function(name) {
 				var dir = fileList.getCurrentDirectory();

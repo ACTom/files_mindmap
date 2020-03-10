@@ -96,7 +96,7 @@
             position: absolute;
             right: 280px;
             z-index: 100000;
-            width: 60px;
+            width: 100px;
         }
         #autosave-checkbox {
             bottom: 3px;
