@@ -23,7 +23,7 @@ redirectIfNotDisplayedInFrame();
 
 	var MindMap = {
 		_changed: false,
-		_saveTimer: null,
+		_autoSaveTimer: null,
 		_clearStatusMessageTimer: null,
 		_loadStatus: false,
 		init: function() {
@@ -40,7 +40,8 @@ redirectIfNotDisplayedInFrame();
 						self.initHotkey();
 						self.bindEvent();
 						self.loadData();
-						//self.startSaveTimer();
+						self.loadAutoSaveStatus();
+						self.startAutoSaveTimer();
 						minder.on('contentchange', function() {
 							self._changed = true;
 						});
@@ -112,15 +113,7 @@ redirectIfNotDisplayedInFrame();
 			return window.parent.OCA.FilesMindMap.hideMessage(id);
 		},
 		setStatusMessage: function(msg) {
-			var self = this;
-			if (this._clearStatusMessageTimer !== null) {
-				this.hideMessage(this._clearStatusMessageTimer);
-			}
-			this._clearStatusMessageTimer = this.showMessage(msg);
-			setTimeout(function(){
-				self.hideMessage(self._clearStatusMessageTimer);
-				self._clearStatusMessageTimer = null;
-			}, 3000);
+			this.showMessage(msg);
 		},
 		save: function(callback) {
 			var self = this;
@@ -140,6 +133,34 @@ redirectIfNotDisplayedInFrame();
 					}
 				});
 			}
+		},
+		startAutoSaveTimer: function() {
+			var self = this;
+			if (self._autoSaveTimer != null) {
+				clearInterval(self._autoSaveTimer);
+				self._autoSaveTimer = null;
+			}
+			self._autoSaveTimer = setInterval(function() {
+				if (self.getAutoSaveStatus()) {
+					self.save();
+				}
+			}, 5000);
+		},
+		getAutoSaveStatus: function() {
+			var status = $('#autosave-checkbox').is(':checked');
+			if (window.localStorage) {
+				localStorage.setItem('apps.files_mindmap.autosave', status);
+			}
+			return status;
+		},
+		loadAutoSaveStatus: function() {
+			var status = true;
+			if (window.localStorage) {
+				if (localStorage.getItem('apps.files_mindmap.autosave') === 'false') {
+					status = false;
+				}
+			}
+			$('#autosave-checkbox').prop("checked", status);
 		},
 		loadData: function() {
 			var self = this;

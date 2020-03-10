@@ -22,6 +22,7 @@ OC.L10N.register(
         "Export to PDF": "Export en PDF",
         "Save": "Sauvegarder",
         "The file has not been saved. Is it saved?": "Le fichier n'a pas été sauvegardé. Voulez-vous le sauvegarder ?",
-        "Unsaved file": "Fichier non sauvegardé"
+        "Unsaved file": "Fichier non sauvegardé",
+        "AutoSave": "AutoSave"
     }, "nplurals=1; plural=0;"
 );

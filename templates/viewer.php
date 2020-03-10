@@ -92,6 +92,15 @@
             opacity: 0.8;
             outline: none;
         }
+        #autosave-div {
+            position: absolute;
+            right: 280px;
+            z-index: 100000;
+            width: 60px;
+        }
+        #autosave-checkbox {
+            bottom: 3px;
+        }
         #save-div {
             position: absolute;
             right: 180px;
@@ -111,6 +120,11 @@
 </script>
 <body ng-app="mindmap" ng-controller="MainController">
 <a id="close-button" href="javascript:void(0);">×</a>
+<div id="autosave-div" class="checkbox btn-group-vertical">
+    <label>
+      <input type="checkbox" id="autosave-checkbox" checked="checked" title="<?php p($l->t('AutoSave')); ?>"><?php p($l->t('AutoSave')); ?>
+    </label>
+  </div>
 <div id="save-div" class="btn-group-vertical" >
 <button id="save-button" type="button" class="btn btn-default export-caption dropdown-toggle" title="<?php p($l->t('Save')); ?>"><?php p($l->t('Save')); ?></button>
 </div>

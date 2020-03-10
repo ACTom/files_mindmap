@@ -23,6 +23,7 @@ OC.L10N.register(
         "Export to PDF": "导出为PDF文件",
         "Save": "保存",
         "The file has not been saved. Is it saved?": "该文件尚未保存，是否现在保存？",
-        "Unsaved file": "未保存的文件"
+        "Unsaved file": "未保存的文件",
+        "AutoSave": "自动保存"
     }, "nplurals=1; plural=0;"
 );

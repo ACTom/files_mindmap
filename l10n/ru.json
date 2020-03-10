@@ -22,7 +22,8 @@
     "Export to PDF": "Export to PDF",
     "Save": "Save",
     "The file has not been saved. Is it saved?": "The file has not been saved. Is it saved?",
-    "Unsaved file": "Unsaved file"
+    "Unsaved file": "Unsaved file",
+    "AutoSave": "AutoSave"
   },
   "pluralForm": "nplurals=1; plural=0;"
 }

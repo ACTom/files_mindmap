@@ -23,6 +23,7 @@ OC.L10N.register(
         "Export to PDF": "Export to PDF",
         "Save": "Save",
         "The file has not been saved. Is it saved?": "The file has not been saved. Is it saved?",
-        "Unsaved file": "Unsaved file"
+        "Unsaved file": "Unsaved file",
+        "AutoSave": "AutoSave"
     }, "nplurals=1; plural=0;"
 );
