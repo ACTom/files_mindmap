@@ -91,19 +91,27 @@ redirectIfNotDisplayedInFrame();
 		},
 		close: function() {
 			var self = this;
+			var doHide = function() {
+				if (self._autoSaveTimer !== null) {
+					clearInterval(self._autoSaveTimer);
+				}
+				window.parent.OCA.FilesMindMap.hide();
+			}
 			if (this._changed) {
 				window.parent.OC.dialogs.confirm(t('The file has not been saved. Is it saved?'),
 					t('Unsaved file'), function(result){
 					if (result) {
-						self.save(function(){
-							window.parent.OCA.FilesMindMap.hide();
+						self.save(function(status){
+							if (status) {
+								doHide();
+							}
 						});
 					} else {
-						window.parent.OCA.FilesMindMap.hide();
+						doHide();
 					}
 				},true);
 			} else {
-				window.parent.OCA.FilesMindMap.hide();
+				doHide();
 			}
 		},
 		showMessage: function(msg, delay) {
