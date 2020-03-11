@@ -23,7 +23,8 @@
     "Save": "Speichern",
     "The file has not been saved. Is it saved?": "Die Datei wurde noch nicht gespeichert. Soll sie gespeichert werden?",
     "Unsaved file": "Ungespeicherte Datei",
-    "AutoSave": "AutoSave"
+    "AutoSave": "AutoSave",
+    "Writing to FreeMind files is currently not supported.": "Writing to FreeMind files is currently not supported."
   },
   "pluralForm": "nplurals=1; plural=0;"
 }

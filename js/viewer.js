@@ -150,7 +150,10 @@ redirectIfNotDisplayedInFrame();
 			}
 			self._autoSaveTimer = setInterval(function() {
 				if (self.getAutoSaveStatus()) {
-					self.save();
+					/* When file is readonly, autosave will stop working */
+					if (window.parent.OCA.FilesMindMap._file.writeable) {
+						self.save();
+					}
 				}
 			}, 10000);
 		},
@@ -186,7 +189,6 @@ redirectIfNotDisplayedInFrame();
 					"version":"1.4.43"
 				};
 				/* 新生成的空文件 */
-				window.parent.OCA.FilesMindMap.minder = minder;
 				if (data !== ' ') {
 					try {
 						obj = JSON.parse(data);
@@ -202,6 +204,11 @@ redirectIfNotDisplayedInFrame();
 				}
 				self._loadStatus = true;
 				self._changed = false;
+
+				/* When file is readonly, hide autosave checkbox */
+				if (!window.parent.OCA.FilesMindMap._file.writeable) {
+					$('#autosave-div').hide();
+				}
 			}, function(msg){
 				self._loadStatus = false;
 				window.alert(t('Load file fail!') + msg);

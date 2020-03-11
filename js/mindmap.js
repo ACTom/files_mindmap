@@ -123,6 +123,12 @@ var FilesMindMap = {
 		if (this._file.dir === '/') {
 			path = '/' + this._file.name;
 		}
+
+		if (this._file.mime === 'application/x-freemind') {
+			fail(t('files_mindmap', 'Writing to FreeMind files is currently not supported.'));
+			return;
+		}
+
 		var putObject = {
 			filecontents: data,
 			path: path
@@ -155,26 +161,34 @@ var FilesMindMap = {
 	},
 
 	load: function(success, failure) {
+		var self = this;
 		var filename = this._file.name;
 		var dir = this._file.dir;
 		var url = '';
 		var sharingToken = '';
-		if ($('#isPublic').val() && $('#mimetype').val() === 'application/km') {
+		var mimetype = $('#mimetype').val();
+		if ($('#isPublic').val() && (mimetype === 'application/km' || mimetype === 'application/x-freemind')) {
 			sharingToken = $('#sharingToken').val();
 			url = OC.generateUrl('/apps/files_mindmap/public/{token}', {token: sharingToken});
 		} else if ($('#isPublic').val()) {
 			sharingToken = $('#sharingToken').val();
 			url = OC.generateUrl('/apps/files_mindmap/public/{token}?dir={dir}&filename={filename}',
                 { token: sharingToken, filename: filename, dir: dir});
-			//url = this._currentContext.fileList.getDownloadUrl(filename, dir);
 		} else {
 			url = OC.generateUrl('/apps/files_mindmap/ajax/loadfile?filename={filename}&dir={dir}',
                 {filename: filename, dir: dir});
 		}
 		$.get(url).done(function(data) {
+			/* Freemind is readonly */
+			if (data.mime === 'application/x-freemind') {
+				data.writeable = false;
+				data.filecontents = JSON.stringify(self.FreeMindPlugin.toKm(data.filecontents));
+			}
+
 			OCA.FilesMindMap._file.writeable = data.writeable;
 			OCA.FilesMindMap._file.mime = data.mime;
 			OCA.FilesMindMap._file.mtime = data.mtime;
+
 
 			success(data.filecontents);
 		}).fail(function(jqXHR) {
@@ -209,7 +223,7 @@ var FilesMindMap = {
 			$("#filestable")
 			.find("tr[data-type=file]")
 			.each(function () {
-				if (($(this).attr("data-mime") == "application/km") 
+				if (($(this).attr("data-mime") == "application/km" || $(this).attr("data-mime") == "application/x-freemind") 
 					&& ($(this).find("div.thumbnail").length > 0)) {
 						if ($(this).find("div.thumbnail").hasClass("icon-mindmap") == false) {
 							$(this).find("div.thumbnail").addClass("icon icon-mindmap");
@@ -245,8 +259,7 @@ var FilesMindMap = {
 	getSupportedMimetypes: function() {
 		return [
 			'application/km',
-			'application/kmp',
-			'application/xmind'
+			'application/x-freemind'
 		];
 	},
 };
@@ -284,6 +297,157 @@ FilesMindMap.NewFileMenuPlugin = {
 	}
 };
 
+FilesMindMap.FreeMindPlugin = {
+    markerMap: {
+        'full-1': ['priority', 1],
+        'full-2': ['priority', 2],
+        'full-3': ['priority', 3],
+        'full-4': ['priority', 4],
+        'full-5': ['priority', 5],
+        'full-6': ['priority', 6],
+        'full-7': ['priority', 7],
+        'full-8': ['priority', 8]
+    },
+    jsVar: function (s) { 
+        return String(s || '').replace(/-/g,"_"); 
+    },
+    toArray: function (obj){
+        if (!Array.isArray(obj)) {
+            return [obj];
+        }
+        return obj;
+    },
+    parseNode: function (node) {
+        if (!node) return null;
+        var self = this;
+        var txt = '', obj = null, att = null;
+        var nt = node.nodeType, nn = this.jsVar(node.localName || node.nodeName);
+        var nv = node.text || node.nodeValue || '';
+        
+        if (node.childNodes) {
+            if (node.childNodes.length > 0) {
+                node.childNodes.forEach(function(cn) {
+                    var cnt = cn.nodeType, cnn = self.jsVar(cn.localName || cn.nodeName);
+                    var cnv = cn.text || cn.nodeValue || '';
+        
+                    /* comment */
+                    if (cnt == 8) {
+                        return; // ignore comment node
+                    }
+                    /* white-space */
+                    else if (cnt == 3 || cnt == 4 || !cnn) {
+                        if (cnv.match(/^\s+$/)) {
+                            return;
+                        };
+                        txt += cnv.replace(/^\s+/, '').replace(/\s+$/, '');
+                    } else {
+                        obj = obj || {};
+                        if (obj[cnn]) {
+                            if (!obj[cnn].length) {
+                                obj[cnn] = self.toArray(obj[cnn]);
+                            }
+                            obj[cnn] = self.toArray(obj[cnn]);
+    
+                            obj[cnn].push(self.parseNode(cn, true));
+                        } else {
+                            obj[cnn] = self.parseNode(cn);
+                        };
+                    };
+                });
+            };
+        };
+        if (node.attributes) {
+            if (node.attributes.length > 0) {
+                att = {}; obj = obj || {};
+                node.attributes.forEach = [].forEach.bind(node.attributes);
+                node.attributes.forEach(function (at) {
+                    var atn = self.jsVar(at.name), atv = at.value;
+                    att[atn] = atv;
+                    if (obj[atn]) {
+                        obj[cnn] = this.toArray(obj[cnn]);
+    
+                        obj[atn][obj[atn].length] = atv;
+                        obj[atn].length = obj[atn].length;
+                    }
+                    else {
+                        obj[atn] = atv;
+                    };
+                });
+            };
+        };
+        if (obj) {
+            obj = Object.assign({}, (txt != '' ? new String(txt) : {}), obj || {});
+            txt = (obj.text) ? ([obj.text || '']).concat([txt]) : txt;
+            if (txt) obj.text = txt;
+            txt = '';
+        };
+        var out = obj || txt;
+        return out;
+    },
+    parseXML: function (xml) {
+        root = (xml.nodeType == 9) ? xml.documentElement : xml;
+        return this.parseNode(root, true);
+    },
+    xml2json: function (str) {
+        var domParser = new DOMParser();
+        var dom = domParser.parseFromString(str, 'application/xml');
+    
+        var json = this.parseXML(dom);
+        return json;
+    },
+    processTopic: function (topic, obj) {
+        //处理文本
+        obj.data = {
+            text: topic.TEXT
+        };
+        var i;
+
+        // 处理标签
+        if (topic.icon) {
+            var icons = topic.icon;
+            var type;
+            if (icons.length && icons.length > 0) {
+                for (i in icons) {
+                    type = this.markerMap[icons[i].BUILTIN];
+                    if (type) obj.data[type[0]] = type[1];
+                }
+            } else {
+                type = this.markerMap[icons.BUILTIN];
+                if (type) obj.data[type[0]] = type[1];
+            }
+        }
+
+        // 处理超链接
+        if (topic.LINK) {
+            obj.data.hyperlink = topic.LINK;
+        }
+
+        //处理子节点
+        if (topic.node) {
+            var tmp = topic.node;
+            if (tmp.length && tmp.length > 0) { //多个子节点
+                obj.children = [];
+
+                for (i in tmp) {
+                    obj.children.push({});
+                    this.processTopic(tmp[i], obj.children[i]);
+                }
+
+            } else { //一个子节点
+                obj.children = [{}];
+                this.processTopic(tmp, obj.children[0]);
+            }
+        }
+    },
+    toKm: function (xml) {
+        var json = this.xml2json(xml);
+        var result = {};
+        this.processTopic(json.node, result);
+        return result;
+    }
+
+};
+
 
 OCA.FilesMindMap = FilesMindMap;
 
@@ -291,7 +455,7 @@ OC.Plugins.register('OCA.Files.NewFileMenu', FilesMindMap.NewFileMenuPlugin);
 
 $(document).ready(function(){
 	OCA.FilesMindMap.init();
-	if ($('#isPublic').val() && $('#mimetype').val() === 'application/km') {
+	if ($('#isPublic').val() && ($('#mimetype').val() === 'application/km'||$('#mimetype').val() === 'application/x-freemind')) {
 		var sharingToken = $('#sharingToken').val();
 		var downloadUrl = OC.generateUrl('/s/{token}/download', {token: sharingToken});
 		var viewer = OCA.FilesMindMap;

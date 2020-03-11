@@ -1,5 +1,6 @@
 OC.L10N.register(
-    "files_mindmap", {
+    "files_mindmap", 
+    {
         "New mind map file": "Neue Mindmap-Datei",
         "New mind map.km": "Neue Mindmap.km",
         "Main Topic": "Zentrales Thema",
@@ -23,6 +24,7 @@ OC.L10N.register(
         "Save": "Speichern",
         "The file has not been saved. Is it saved?": "Die Datei wurde noch nicht gespeichert. Soll sie gespeichert werden?",
         "Unsaved file": "Ungespeicherte Datei",
-        "AutoSave": "AutoSave"
+        "AutoSave": "AutoSave",
+        "Writing to FreeMind files is currently not supported.": "Writing to FreeMind files is currently not supported."
     }, "nplurals=1; plural=0;"
 );

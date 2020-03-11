@@ -24,6 +24,7 @@ OC.L10N.register(
         "Save":"Salva",
         "The file has not been saved. Is it saved?": "Il file non è stato salvato. È salvato?",
         "Unsaved file": "File non salvato",
-        "AutoSave": "AutoSave"
+        "AutoSave": "AutoSave",
+        "Writing to FreeMind files is currently not supported.": "Writing to FreeMind files is currently not supported."
     }, "nplurals=1; plural=0;"
 );

@@ -24,6 +24,7 @@ OC.L10N.register(
         "Save": "儲存",
         "The file has not been saved. Is it saved?": "檔案尚未儲存，是否儲存？",
         "Unsaved file": "尚未儲存的檔案",
-        "AutoSave": "自动儲存"
+        "AutoSave": "自动儲存",
+        "Writing to FreeMind files is currently not supported.": "暂时不支持儲存FreeMind檔案！"
     }, "nplurals=1; plural=0;"
 );

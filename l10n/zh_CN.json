@@ -23,7 +23,8 @@
     "Save": "保存",
     "The file has not been saved. Is it saved?": "该文件尚未保存，是否现在保存？",
     "Unsaved file": "未保存的文件",
-    "AutoSave": "自动保存"
+    "AutoSave": "自动保存",
+    "Writing to FreeMind files is currently not supported.": "暂时不支持保存FreeMind文件！"
   },
   "pluralForm": "nplurals=1; plural=0;"
 }
