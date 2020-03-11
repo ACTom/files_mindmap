@@ -2,6 +2,7 @@ var FilesMindMap = {
 	_currentContext: null,
 	_file: {},
 	_fileList: null,
+	_lastTitle: '',
 	init: function() {
 		this.registerFileActions();
 		this.hackFileIcon();
@@ -35,6 +36,8 @@ var FilesMindMap = {
 
 		// replace the controls with our own
 		$('#app-content #controls').removeClass('hidden');
+
+		document.title = this._lastTitle;
 
 		if (!$('#mimetype').val()) {
 			this._fileList.addAndFetchFileInfo(this._file.dir + '/' + this._file.name, '');
@@ -86,6 +89,9 @@ var FilesMindMap = {
 			iframe.save = function() {
 				window.alert('save');
 			};
+
+			self._lastTitle = document.title;
+			document.title = self._file.name + ' - ' + OC.theme.title;
 
 			// iframe.find('#close-button').click(function() {
 			// 	self.hide();
