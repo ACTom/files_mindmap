@@ -34,8 +34,8 @@ class InstallStep implements IRepairStep {
         $mimetypealiasesFile = $configDir . 'mimetypealiases.json';
         $mimetypemappingFile = $configDir . 'mimetypemapping.json';
 
-        $this->appendToFile($mimetypealiasesFile, ['application/km' => 'mindmap', 'application/x-freemind' => 'mindmap']);
-        $this->appendToFile($mimetypemappingFile, ['km' => ['application/km'], 'mm' => ['application/x-freemind']]);
+        $this->appendToFile($mimetypealiasesFile, ['application/km' => 'mindmap', 'application/x-freemind' => 'mindmap', 'application/vnd.xmind.workbook' => 'mindmap']);
+        $this->appendToFile($mimetypemappingFile, ['km' => ['application/km'], 'mm' => ['application/x-freemind'], 'xmind' => ['application/vnd.xmind.workbook']]);
         $this->logger->info("Add .km,.mm to mimetype list.", ["app" => "files_mindmap"]);
         $this->updateJS->run(new StringInput(''), new NullOutput());
         

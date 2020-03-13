@@ -25,6 +25,7 @@ OC.L10N.register(
         "The file has not been saved. Is it saved?": "The file has not been saved. Is it saved?",
         "Unsaved file": "Unsaved file",
         "AutoSave": "AutoSave",
-        "Writing to FreeMind files is currently not supported.": "Writing to FreeMind files is currently not supported."
+        "Does not support saving {extension} files.": "Does not support saving {extension} files.",
+        "Unsupported file type: {mimetype}": "Unsupported file type: {mimetype}"
     }, "nplurals=1; plural=0;"
 );

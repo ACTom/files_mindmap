@@ -9,6 +9,7 @@ $eventDispatcher = \OC::$server->getEventDispatcher();
 if (\OC::$server->getUserSession()->isLoggedIn()) {
     $eventDispatcher->addListener('OCA\Files::loadAdditionalScripts', function() {
         \OCP\Util::addStyle('files_mindmap', 'style');
+        \OCP\Util::addScript('files_mindmap', 'jszip');
         \OCP\Util::addScript('files_mindmap', 'mindmap');
     });
 }
@@ -16,6 +17,7 @@ if (\OC::$server->getUserSession()->isLoggedIn()) {
 
 $eventDispatcher->addListener('OCA\Files_Sharing::loadAdditionalScripts', function () {
     \OCP\Util::addStyle('files_mindmap', 'style');
+    \OCP\Util::addScript('files_mindmap', 'jszip');
     \OCP\Util::addScript('files_mindmap', 'mindmap');
 });
 

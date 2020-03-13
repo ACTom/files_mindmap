@@ -34,8 +34,8 @@ class UninstallStep implements IRepairStep {
         $mimetypealiasesFile = $configDir . 'mimetypealiases.json';
         $mimetypemappingFile = $configDir . 'mimetypemapping.json';
 
-        $this->removeFromFile($mimetypealiasesFile, ['application/km' => 'mindmap', 'application/x-freemind' => 'mindmap']);
-        $this->removeFromFile($mimetypemappingFile, ['km' => ['application/km'], 'mm' => ['application/x-freemind']]);
+        $this->removeFromFile($mimetypealiasesFile, ['application/km' => 'mindmap', 'application/x-freemind' => 'mindmap', 'application/vnd.xmind.workbook' => 'mindmap']);
+        $this->removeFromFile($mimetypemappingFile, ['km' => ['application/km'], 'mm' => ['application/x-freemind'], 'xmind' => ['application/vnd.xmind.workbook']]);
         $this->logger->info("Remove .km,.mm from mimetype list.", ["app" => "files_mindmap"]);
         $this->updateJS->run(new StringInput(''), new NullOutput());
 

@@ -97,7 +97,7 @@ redirectIfNotDisplayedInFrame();
 				}
 				window.parent.OCA.FilesMindMap.hide();
 			}
-			if (this._changed) {
+			if (this._changed && window.parent.OCA.FilesMindMap._file.supportedWrite) {
 				window.parent.OC.dialogs.confirm(t('The file has not been saved. Is it saved?'),
 					t('Unsaved file'), function(result){
 					if (result) {
@@ -208,6 +208,10 @@ redirectIfNotDisplayedInFrame();
 				/* When file is readonly, hide autosave checkbox */
 				if (!window.parent.OCA.FilesMindMap._file.writeable) {
 					$('#autosave-div').hide();
+				}
+				/* When extension cannot write, hide save checkbox */
+				if (!window.parent.OCA.FilesMindMap._file.supportedWrite) {
+					$('#save-div').hide();
 				}
 			}, function(msg){
 				self._loadStatus = false;

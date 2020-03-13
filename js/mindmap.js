@@ -3,9 +3,35 @@ var FilesMindMap = {
 	_file: {},
 	_fileList: null,
 	_lastTitle: '',
+	_extensions: [],
 	init: function() {
+		this.registerExtension([FilesMindMap.Extensions.KM, FilesMindMap.Extensions.FreeMind, FilesMindMap.Extensions.XMind]);
 		this.registerFileActions();
 		this.hackFileIcon();
+	},
+
+	registerExtension: function(objs) {
+		var self = this;
+		if (!Array.isArray(objs)) {
+			objs = [objs];
+		};
+		objs.forEach(function(obj){
+			self._extensions.push(obj);
+		});		
+	},
+
+	getExtensionByMime: function(mime) {
+		for (i = 0; i < this._extensions.length; i++) {
+			var obj = this._extensions[i];
+			if (obj.mimes.indexOf(mime) >= 0) {
+				return obj;
+			}
+		}
+		return null;
+	},
+
+	isSupportedMime: function(mime) {
+		return this.getExtensionByMime(mime) !== null ? true : false;
 	},
 
 	showMessage: function(msg, delay, t) {
@@ -124,40 +150,44 @@ var FilesMindMap = {
 			path = '/' + this._file.name;
 		}
 
-		if (this._file.mime === 'application/x-freemind') {
-			fail(t('files_mindmap', 'Writing to FreeMind files is currently not supported.'));
+		/* 当encode方法没实现的时候无法保存 */
+		var plugin = this.getExtensionByMime(this._file.mime);
+		if (plugin.encode === null) {
+			fail(t('files_mindmap', 'Does not support saving {extension} files.', {extension: plugin.name}));
 			return;
 		}
 
-		var putObject = {
-			filecontents: data,
-			path: path
-		};
-
-		if ($('#isPublic').val()){
-			putObject.token = $('#sharingToken').val();
-			url = OC.generateUrl('/apps/files_mindmap/share/save');
-			if ($('#mimetype').val() === 'application/km') {
-				putObject.path = '';
+		plugin.encode(data).then(function(data) {
+			var putObject = {
+				filecontents: data,
+				path: path
+			};
+	
+			if ($('#isPublic').val()){
+				putObject.token = $('#sharingToken').val();
+				url = OC.generateUrl('/apps/files_mindmap/share/save');
+				if (this.isSupportedMime($('#mimetype').val())) {
+					putObject.path = '';
+				}
+			} else {
+				url = OC.generateUrl('/apps/files_mindmap/ajax/savefile');
 			}
-		} else {
-			url = OC.generateUrl('/apps/files_mindmap/ajax/savefile');
-		}
-
-
-		$.ajax({
-			type: 'PUT',
-			url: url,
-			data: putObject
-		}).done(function(){
-			success(t('files_mindmap', 'File Saved'));
-		}).fail(function(jqXHR){
-			var message = t('files_mindmap', 'Save failed');
-			try{
-				message = JSON.parse(jqXHR.responseText).message;
-			}catch(e){}
-			fail(message);
-		});
+	
+	
+			$.ajax({
+				type: 'PUT',
+				url: url,
+				data: putObject
+			}).done(function(){
+				success(t('files_mindmap', 'File Saved'));
+			}).fail(function(jqXHR){
+				var message = t('files_mindmap', 'Save failed');
+				try{
+					message = JSON.parse(jqXHR.responseText).message;
+				}catch(e){}
+				fail(message);
+			});
+		});		
 	},
 
 	load: function(success, failure) {
@@ -167,7 +197,7 @@ var FilesMindMap = {
 		var url = '';
 		var sharingToken = '';
 		var mimetype = $('#mimetype').val();
-		if ($('#isPublic').val() && (mimetype === 'application/km' || mimetype === 'application/x-freemind')) {
+		if ($('#isPublic').val() && this.isSupportedMime(mimetype)) {
 			sharingToken = $('#sharingToken').val();
 			url = OC.generateUrl('/apps/files_mindmap/public/{token}', {token: sharingToken});
 		} else if ($('#isPublic').val()) {
@@ -179,18 +209,29 @@ var FilesMindMap = {
                 {filename: filename, dir: dir});
 		}
 		$.get(url).done(function(data) {
-			/* Freemind is readonly */
-			if (data.mime === 'application/x-freemind') {
-				data.writeable = false;
-				data.filecontents = JSON.stringify(self.FreeMindPlugin.toKm(data.filecontents));
+			data.filecontents = FilesMindMap.Util.base64Decode(data.filecontents);
+			var plugin = self.getExtensionByMime(data.mime);
+			if (!plugin || plugin.decode === null) {
+				fail(t('files_mindmap', 'Unsupported file type: {mimetype}', {mimetype: data.mime}));
 			}
+			
+			plugin.decode(data.filecontents).then(function(kmdata){
+				data.filecontents = JSON.stringify(kmdata);
+				data.supportedWrite = true;
+				if (plugin.encode === null) {
+					data.writeable = false;
+					data.supportedWrite = false;
+				}
 
-			OCA.FilesMindMap._file.writeable = data.writeable;
-			OCA.FilesMindMap._file.mime = data.mime;
-			OCA.FilesMindMap._file.mtime = data.mtime;
+				OCA.FilesMindMap._file.writeable = data.writeable;
+				OCA.FilesMindMap._file.supportedWrite = data.supportedWrite;
+				OCA.FilesMindMap._file.mime = data.mime;
+				OCA.FilesMindMap._file.mtime = data.mtime;
 
-
-			success(data.filecontents);
+				success(data.filecontents);
+			}, function(e){
+				failure(e);
+			})
 		}).fail(function(jqXHR) {
 			failure(JSON.parse(jqXHR.responseText).message);
 		});
@@ -257,47 +298,46 @@ var FilesMindMap = {
 	},
 
 	getSupportedMimetypes: function() {
-		return [
-			'application/km',
-			'application/x-freemind'
-		];
+		var result = [];
+		this._extensions.forEach(function(obj){
+			result = result.concat(obj.mimes);
+		});
+		return result;
 	},
 };
 
-FilesMindMap.NewFileMenuPlugin = {
+FilesMindMap.Extensions = {};
 
-	attach: function(menu) {
-		var fileList = menu.fileList;
-
-		// only attach to main file list, public view is not supported yet
-		if (fileList.id !== 'files') {
-			return;
-		}
-
-		// register the new menu entry
-		menu.addMenuEntry({
-			id: 'mindmapfile',
-			displayName: t('files_mindmap', 'New mind map file'),
-			templateName: t('files_mindmap', 'New mind map.km'),
-			iconClass: 'icon-mindmap',
-			fileType: 'application/km',
-			actionHandler: function(name) {
-				var dir = fileList.getCurrentDirectory();
-				fileList.createFile(name).then(function() {
-					FilesMindMap._onEditorTrigger(
-						name,
-						{
-							fileList: fileList,
-							dir: dir
-						}
-					);
-				});
-			}
-		});
+FilesMindMap.Extensions.KM = {
+	name: 'km',
+	mimes: ['application/km'],
+	encode: function(data) {
+        return new Promise(function(resolve, reject) {
+			resolve(data);
+        });
+	},
+	decode: function(data) {
+		return new Promise(function(resolve, reject) {
+			resolve(JSON.parse(data));
+        });
 	}
 };
 
-FilesMindMap.FreeMindPlugin = {
+FilesMindMap.Extensions.FreeMind = {
+	name: 'freemind',
+	mimes: ['application/x-freemind'],
+	encode: null,
+	decode: function(data) {
+		var self = this;
+        return new Promise(function(resolve, reject) {
+            try {
+                var result = self.toKm(data);
+                resolve(result); 
+            } catch (e) {
+                reject(e);
+            }
+        });
+	},
     markerMap: {
         'full-1': ['priority', 1],
         'full-2': ['priority', 2],
@@ -308,6 +348,183 @@ FilesMindMap.FreeMindPlugin = {
         'full-7': ['priority', 7],
         'full-8': ['priority', 8]
     },
+    processTopic: function (topic, obj) {
+        //处理文本
+        obj.data = {
+            text: topic.TEXT
+        };
+        var i;
+
+        // 处理标签
+        if (topic.icon) {
+            var icons = topic.icon;
+            var type;
+            if (icons.length && icons.length > 0) {
+                for (i in icons) {
+                    type = this.markerMap[icons[i].BUILTIN];
+                    if (type) obj.data[type[0]] = type[1];
+                }
+            } else {
+                type = this.markerMap[icons.BUILTIN];
+                if (type) obj.data[type[0]] = type[1];
+            }
+        }
+
+        // 处理超链接
+        if (topic.LINK) {
+            obj.data.hyperlink = topic.LINK;
+        }
+
+        //处理子节点
+        if (topic.node) {
+            var tmp = topic.node;
+            if (tmp.length && tmp.length > 0) { //多个子节点
+                obj.children = [];
+
+                for (i in tmp) {
+                    obj.children.push({});
+                    this.processTopic(tmp[i], obj.children[i]);
+                }
+
+            } else { //一个子节点
+                obj.children = [{}];
+                this.processTopic(tmp, obj.children[0]);
+            }
+        }
+    },
+    toKm: function (xml) {
+        var json = FilesMindMap.Util.xml2json(xml);
+        var result = {};
+        this.processTopic(json.node, result);
+        return result;
+    }
+
+};
+
+FilesMindMap.Extensions.XMind = {
+	name: 'xmind',
+	mimes: ['application/vnd.xmind.workbook'],
+	encode: null,
+	decode: function(data) {
+		return this.readDocument(data);
+	},
+	markerMap : {
+        'priority-1': ['priority', 1],
+        'priority-2': ['priority', 2],
+        'priority-3': ['priority', 3],
+        'priority-4': ['priority', 4],
+        'priority-5': ['priority', 5],
+        'priority-6': ['priority', 6],
+        'priority-7': ['priority', 7],
+        'priority-8': ['priority', 8],
+
+        'task-start': ['progress', 1],
+        'task-oct': ['progress', 2],
+        'task-quarter': ['progress', 3],
+        'task-3oct': ['progress', 4],
+        'task-half': ['progress', 5],
+        'task-5oct': ['progress', 6],
+        'task-3quar': ['progress', 7],
+        'task-7oct': ['progress', 8],
+        'task-done': ['progress', 9]
+    },
+    processTopic: function (topic, obj) {
+
+        //处理文本
+        obj.data = {
+            text: topic.title
+        };
+
+        // 处理标签
+        if (topic.marker_refs && topic.marker_refs.marker_ref) {
+            var markers = topic.marker_refs.marker_ref;
+            var type;
+            if (markers.length && markers.length > 0) {
+                for (var i in markers) {
+                    type = this.markerMap[markers[i].marker_id];
+                    if (type) obj.data[type[0]] = type[1];
+                }
+            } else {
+                type = this.markerMap[markers.marker_id];
+                if (type) obj.data[type[0]] = type[1];
+            }
+        }
+
+        // 处理超链接
+        if (topic['xlink:href']) {
+            obj.data.hyperlink = topic['xlink:href'];
+        }
+        //处理子节点
+        var topics = topic.children && topic.children.topics;
+        var subTopics = topics && (topics.topic || topics[0] && topics[0].topic);
+        if (subTopics) {
+            var tmp = subTopics;
+            if (tmp.length && tmp.length > 0) { //多个子节点
+                obj.children = [];
+
+                for (var i in tmp) {
+                    obj.children.push({});
+                    this.processTopic(tmp[i], obj.children[i]);
+                }
+
+            } else { //一个子节点
+                obj.children = [{}];
+                this.processTopic(tmp, obj.children[0]);
+            }
+        }
+    },
+    toKm: function (xml) {
+        var json = FilesMindMap.Util.xml2json(xml);
+        var result = {};
+        var sheet = json.sheet;
+        var topic = Array.isArray(sheet) ? sheet[0].topic : sheet.topic;
+        this.processTopic(topic, result);
+        return result;
+    },
+    readDocument: function (file) {
+        var self = this;
+        return new Promise(function(resolve, reject) {
+            JSZip.loadAsync(file).then(function(zip){
+                var contentFile = zip.file('content.xml');
+                if (contentFile != null) {
+                    contentFile.async('text').then(function(text){
+                        try {
+                            json = self.toKm(text);
+                            resolve(json);
+                        } catch (e) {
+                            reject(e);
+                        }
+                    });
+                } else {
+                    reject(new Error('Content document missing'));
+                }
+            }, function(e) {
+                reject(e);
+            });
+        });
+    }
+};
+
+FilesMindMap.Util = {
+	base64Encode: function(string) {
+		return btoa(encodeURIComponent(string).replace(/%([0-9A-F]{2})/g, function(match, p1) {
+			return String.fromCharCode(parseInt(p1, 16))
+		}))
+	},
+	base64Decode: function(base64) {
+		try {
+			return decodeURIComponent(Array.prototype.map.call(atob(base64), function(c) {
+				return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+			}).join(''));
+		} catch (e) {
+			var binary = atob(base64);
+			var array = new Uint8Array(binary.length);
+			for	(var i = 0; i < binary.length; i++) {
+				array[i] = binary.charCodeAt(i);
+			}
+			return new Blob([array]);
+		}
+	},
     jsVar: function (s) { 
         return String(s || '').replace(/-/g,"_"); 
     },
@@ -395,57 +612,39 @@ FilesMindMap.FreeMindPlugin = {
         var json = this.parseXML(dom);
         return json;
     },
-    processTopic: function (topic, obj) {
-        //处理文本
-        obj.data = {
-            text: topic.TEXT
-        };
-        var i;
+};
 
-        // 处理标签
-        if (topic.icon) {
-            var icons = topic.icon;
-            var type;
-            if (icons.length && icons.length > 0) {
-                for (i in icons) {
-                    type = this.markerMap[icons[i].BUILTIN];
-                    if (type) obj.data[type[0]] = type[1];
-                }
-            } else {
-                type = this.markerMap[icons.BUILTIN];
-                if (type) obj.data[type[0]] = type[1];
-            }
-        }
+FilesMindMap.NewFileMenuPlugin = {
 
-        // 处理超链接
-        if (topic.LINK) {
-            obj.data.hyperlink = topic.LINK;
-        }
+	attach: function(menu) {
+		var fileList = menu.fileList;
 
-        //处理子节点
-        if (topic.node) {
-            var tmp = topic.node;
-            if (tmp.length && tmp.length > 0) { //多个子节点
-                obj.children = [];
+		// only attach to main file list, public view is not supported yet
+		if (fileList.id !== 'files') {
+			return;
+		}
 
-                for (i in tmp) {
-                    obj.children.push({});
-                    this.processTopic(tmp[i], obj.children[i]);
-                }
-
-            } else { //一个子节点
-                obj.children = [{}];
-                this.processTopic(tmp, obj.children[0]);
-            }
-        }
-    },
-    toKm: function (xml) {
-        var json = this.xml2json(xml);
-        var result = {};
-        this.processTopic(json.node, result);
-        return result;
-    }
-
+		// register the new menu entry
+		menu.addMenuEntry({
+			id: 'mindmapfile',
+			displayName: t('files_mindmap', 'New mind map file'),
+			templateName: t('files_mindmap', 'New mind map.km'),
+			iconClass: 'icon-mindmap',
+			fileType: 'application/km',
+			actionHandler: function(name) {
+				var dir = fileList.getCurrentDirectory();
+				fileList.createFile(name).then(function() {
+					FilesMindMap._onEditorTrigger(
+						name,
+						{
+							fileList: fileList,
+							dir: dir
+						}
+					);
+				});
+			}
+		});
+	}
 };
 
 

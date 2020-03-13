@@ -79,7 +79,7 @@ class FileHandlingController extends Controller{
 					$mTime = $file->getMTime();
 					return new DataResponse(
 						[
-							'filecontents' => $fileContents,
+							'filecontents' => base64_encode($fileContents),
 							'writeable' => $writable,
 							'mime' => $mime,
 							'mtime' => $mTime
