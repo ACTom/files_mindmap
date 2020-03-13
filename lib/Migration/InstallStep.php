@@ -23,7 +23,7 @@ class InstallStep implements IRepairStep {
     * Returns the step's name
     */
     public function getName() {
-            return 'Install MindMap!';
+            return 'Install MindMap';
     }
 
     /**
@@ -33,14 +33,16 @@ class InstallStep implements IRepairStep {
         $configDir = \OC::$configDir;
         $mimetypealiasesFile = $configDir . 'mimetypealiases.json';
         $mimetypemappingFile = $configDir . 'mimetypemapping.json';
+        
+        $this->logger->info("Copy mindmap icon to core/img directory.", ["app" => "files_mindmap"]);
+        if (!file_exists(\OC::$SERVERROOT . '/core/img/filetypes/mindmap.svg')) {
+            copy(__DIR__ . '/../../img/mindmap.svg', \OC::$SERVERROOT . '/core/img/filetypes/mindmap.svg');
+        }
 
         $this->appendToFile($mimetypealiasesFile, ['application/km' => 'mindmap', 'application/x-freemind' => 'mindmap', 'application/vnd.xmind.workbook' => 'mindmap']);
         $this->appendToFile($mimetypemappingFile, ['km' => ['application/km'], 'mm' => ['application/x-freemind'], 'xmind' => ['application/vnd.xmind.workbook']]);
-        $this->logger->info("Add .km,.mm to mimetype list.", ["app" => "files_mindmap"]);
+        $this->logger->info("Add .km,.mm,.xmind to mimetype list.", ["app" => "files_mindmap"]);
         $this->updateJS->run(new StringInput(''), new NullOutput());
-        
-        $this->logger->info("Copy mindmap icon to core/img directory.", ["app" => "files_mindmap"]);
-        copy(__DIR__ . '/../../img/mindmap.svg', \OC::$SERVERROOT . '/core/img/filetypes/mindmap.svg');
     }
 
     private function appendToFile(string $filename, array $data) {

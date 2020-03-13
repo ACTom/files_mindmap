@@ -23,7 +23,7 @@ class UninstallStep implements IRepairStep {
     * Returns the step's name
     */
     public function getName() {
-            return 'Uninstall MindMap!';
+            return 'Uninstall MindMap';
     }
 
     /**
@@ -36,11 +36,8 @@ class UninstallStep implements IRepairStep {
 
         $this->removeFromFile($mimetypealiasesFile, ['application/km' => 'mindmap', 'application/x-freemind' => 'mindmap', 'application/vnd.xmind.workbook' => 'mindmap']);
         $this->removeFromFile($mimetypemappingFile, ['km' => ['application/km'], 'mm' => ['application/x-freemind'], 'xmind' => ['application/vnd.xmind.workbook']]);
-        $this->logger->info("Remove .km,.mm from mimetype list.", ["app" => "files_mindmap"]);
+        $this->logger->info("Remove .km,.mm,.xmind from mimetype list.", ["app" => "files_mindmap"]);
         $this->updateJS->run(new StringInput(''), new NullOutput());
-
-        $this->logger->info("Remove mindmap icon from core/img directory.", ["app" => "files_mindmap"]);
-        unlink(\OC::$SERVERROOT . '/core/img/filetypes/mindmap.svg');
     }
 
     private function removeFromFile(string $filename, array $data) {
