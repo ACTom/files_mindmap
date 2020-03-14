@@ -216,7 +216,7 @@ var FilesMindMap = {
 			}
 			
 			plugin.decode(data.filecontents).then(function(kmdata){
-				data.filecontents = JSON.stringify(kmdata);
+				data.filecontents = typeof kmdata === 'object' ? JSON.stringify(kmdata) : kmdata;
 				data.supportedWrite = true;
 				if (plugin.encode === null) {
 					data.writeable = false;
@@ -318,7 +318,11 @@ FilesMindMap.Extensions.KM = {
 	},
 	decode: function(data) {
 		return new Promise(function(resolve, reject) {
-			resolve(JSON.parse(data));
+			try {
+				resolve(JSON.parse(data));
+			} catch (e) {
+				resolve(data);
+			}
         });
 	}
 };
