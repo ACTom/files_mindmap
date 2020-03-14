@@ -6,7 +6,7 @@ use OCP\Migration\IRepairStep;
 use OCP\ILogger;
 use OC\Core\Command\Maintenance\Mimetype\UpdateJS;
 use Symfony\Component\Console\Input\StringInput;
-use Symfony\Component\Console\Output\NullOutput;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 class UninstallStep implements IRepairStep {
 
@@ -37,7 +37,7 @@ class UninstallStep implements IRepairStep {
         $this->removeFromFile($mimetypealiasesFile, ['application/km' => 'mindmap', 'application/x-freemind' => 'mindmap', 'application/vnd.xmind.workbook' => 'mindmap']);
         $this->removeFromFile($mimetypemappingFile, ['km' => ['application/km'], 'mm' => ['application/x-freemind'], 'xmind' => ['application/vnd.xmind.workbook']]);
         $this->logger->info("Remove .km,.mm,.xmind from mimetype list.", ["app" => "files_mindmap"]);
-        $this->updateJS->run(new StringInput(''), new NullOutput());
+        $this->updateJS->run(new StringInput(''), new ConsoleOutput());
     }
 
     private function removeFromFile(string $filename, array $data) {

@@ -1,12 +1,14 @@
 <?php
 namespace OCA\Files_MindMap\Migration;
 
+require \OC::$SERVERROOT . "/3rdparty/autoload.php";
+
 use OCP\Migration\IOutput;
 use OCP\Migration\IRepairStep;
 use OCP\ILogger;
 use OC\Core\Command\Maintenance\Mimetype\UpdateJS;
 use Symfony\Component\Console\Input\StringInput;
-use Symfony\Component\Console\Output\NullOutput;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 class InstallStep implements IRepairStep {
 
@@ -42,7 +44,7 @@ class InstallStep implements IRepairStep {
         $this->appendToFile($mimetypealiasesFile, ['application/km' => 'mindmap', 'application/x-freemind' => 'mindmap', 'application/vnd.xmind.workbook' => 'mindmap']);
         $this->appendToFile($mimetypemappingFile, ['km' => ['application/km'], 'mm' => ['application/x-freemind'], 'xmind' => ['application/vnd.xmind.workbook']]);
         $this->logger->info("Add .km,.mm,.xmind to mimetype list.", ["app" => "files_mindmap"]);
-        $this->updateJS->run(new StringInput(''), new NullOutput());
+        $this->updateJS->run(new StringInput(''), new ConsoleOutput());
     }
 
     private function appendToFile(string $filename, array $data) {
