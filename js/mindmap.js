@@ -577,7 +577,7 @@ FilesMindMap.Util = {
                 });
             };
         };
-        if (node.attributes) {
+        if (node.attributes && node.tagName !='title') {
             if (node.attributes.length > 0) {
                 att = {}; obj = obj || {};
                 node.attributes.forEach = [].forEach.bind(node.attributes);
