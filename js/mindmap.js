@@ -117,7 +117,9 @@ var FilesMindMap = {
 			};
 
 			self._lastTitle = document.title;
-			document.title = self._file.name + ' - ' + OC.theme.title;
+
+			var filename = self._file.name ? self._file.name : $('#filename').val();
+			document.title = filename + ' - ' + OC.theme.title;
 
 			// iframe.find('#close-button').click(function() {
 			// 	self.hide();
@@ -658,7 +660,7 @@ OC.Plugins.register('OCA.Files.NewFileMenu', FilesMindMap.NewFileMenuPlugin);
 
 $(document).ready(function(){
 	OCA.FilesMindMap.init();
-	if ($('#isPublic').val() && ($('#mimetype').val() === 'application/km'||$('#mimetype').val() === 'application/x-freemind')) {
+	if ($('#isPublic').val() && OCA.FilesMindMap.isSupportedMime($('#mimetype').val())) {
 		var sharingToken = $('#sharingToken').val();
 		var downloadUrl = OC.generateUrl('/s/{token}/download', {token: sharingToken});
 		var viewer = OCA.FilesMindMap;

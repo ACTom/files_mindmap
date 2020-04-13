@@ -129,9 +129,9 @@ class PublicFileHandlingController extends Controller{
             return new DataResponse(
                 [
                     'writeable' => $writeable,
-                    'filecontents' => $fileContents,
+                    'filecontents' => base64_encode($fileContents),
                     'mtime' => $fileNode->getMTime(),
-                    'mime' => 'application/km'
+                    'mime' => $fileNode->getMimeType()
                 ],
                 Http::STATUS_OK
             );
