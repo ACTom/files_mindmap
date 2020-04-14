@@ -37,8 +37,11 @@ class InstallStep implements IRepairStep {
         $mimetypemappingFile = $configDir . 'mimetypemapping.json';
         
         $this->logger->info("Copy mindmap icon to core/img directory.", ["app" => "files_mindmap"]);
-        if (!file_exists(\OC::$SERVERROOT . '/core/img/filetypes/mindmap.svg')) {
-            copy(__DIR__ . '/../../img/mindmap.svg', \OC::$SERVERROOT . '/core/img/filetypes/mindmap.svg');
+
+        $appImagePath = __DIR__ . '/../../img/mindmap.svg';
+        $coreImagePath = \OC::$SERVERROOT . '/core/img/filetypes/mindmap.svg';
+        if (!file_exists($coreImagePath) || md5_file($coreImagePath) !== md5_file($appImagePath)) {
+            copy($appImagePath, $coreImagePath);
         }
 
         $this->appendToFile($mimetypealiasesFile, ['application/km' => 'mindmap', 'application/x-freemind' => 'mindmap', 'application/vnd.xmind.workbook' => 'mindmap']);
