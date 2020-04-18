@@ -31,23 +31,30 @@ class InstallStep implements IRepairStep {
     /**
     * @param IOutput $output
     */
-    public function run(IOutput $output) {
-        $configDir = \OC::$configDir;
-        $mimetypealiasesFile = $configDir . 'mimetypealiases.json';
-        $mimetypemappingFile = $configDir . 'mimetypemapping.json';
-        
-        $this->logger->info("Copy mindmap icon to core/img directory.", ["app" => "files_mindmap"]);
+    public function run(IOutput $output) {        
+        $currentVersion = implode('.', \OC_Util::getVersion());
 
-        $appImagePath = __DIR__ . '/../../img/mindmap.svg';
-        $coreImagePath = \OC::$SERVERROOT . '/core/img/filetypes/mindmap.svg';
-        if (!file_exists($coreImagePath) || md5_file($coreImagePath) !== md5_file($appImagePath)) {
-            copy($appImagePath, $coreImagePath);
+        if (version_compare($currentVersion, '19.0.0.6', '<')) {
+            /* Since 19.0.0.beta5, NC has mindmap's mimetype icon */
+            $this->logger->info("Copy mindmap icon to core/img directory.", ["app" => "files_mindmap"]);
+            $appImagePath = __DIR__ . '/../../img/mindmap.svg';
+            $coreImagePath = \OC::$SERVERROOT . '/core/img/filetypes/mindmap.svg';
+            if (!file_exists($coreImagePath) || md5_file($coreImagePath) !== md5_file($appImagePath)) {
+                copy($appImagePath, $coreImagePath);
+            }
         }
 
-        $this->appendToFile($mimetypealiasesFile, ['application/km' => 'mindmap', 'application/x-freemind' => 'mindmap', 'application/vnd.xmind.workbook' => 'mindmap']);
-        $this->appendToFile($mimetypemappingFile, ['km' => ['application/km'], 'mm' => ['application/x-freemind'], 'xmind' => ['application/vnd.xmind.workbook']]);
-        $this->logger->info("Add .km,.mm,.xmind to mimetype list.", ["app" => "files_mindmap"]);
-        $this->updateJS->run(new StringInput(''), new ConsoleOutput());
+        if (version_compare($currentVersion, '19.0.0.4', '<')) {
+            /* Since 19.0.0.beta3, NC has mindmap's mimetype */
+            $configDir = \OC::$configDir;
+            $mimetypealiasesFile = $configDir . 'mimetypealiases.json';
+            $mimetypemappingFile = $configDir . 'mimetypemapping.json';
+
+            $this->appendToFile($mimetypealiasesFile, ['application/km' => 'mindmap', 'application/x-freemind' => 'mindmap', 'application/vnd.xmind.workbook' => 'mindmap']);
+            $this->appendToFile($mimetypemappingFile, ['km' => ['application/km'], 'mm' => ['application/x-freemind'], 'xmind' => ['application/vnd.xmind.workbook']]);
+            $this->logger->info("Add .km,.mm,.xmind to mimetype list.", ["app" => "files_mindmap"]);
+            $this->updateJS->run(new StringInput(''), new ConsoleOutput());
+        }        
     }
 
     private function appendToFile(string $filename, array $data) {
