@@ -5,18 +5,18 @@ OC.L10N.register(
         "New mind map.km": "Neue Mindmap.km",
         "Main Topic": "Zentrales Thema",
         "Saving...": "Speichere ...",
-        "This file is not a valid mind map file and may cause file corruption if you continue editing.": "Diese Datei ist keine gültige Mind Map-Datei und kann zu Dateibeschädigungen führen, wenn Du mit der Bearbeitung fortfährst.",
+        "This file is not a valid mind map file and may cause file corruption if you continue editing.": "Diese Datei ist keine gültige Mind Map-Datei und kann zu Dateibeschädigungen führen, wenn Sie mit der Bearbeitung fortfahren.",
         "Load file fail!": "Datei laden fehlgeschlagen!",
         "File Saved": "Datei gespeichert",
         "Save failed": "Speichern fehlgeschlagen",
         "Export": "Exportieren",
         "Export to PNG": "Exportieren als PNG",
         "Export to SVG": "Exportieren als SVG",
-        "You are not permission to write this file": "Du hast keine Berechtigung in diese Datei zu schreiben",
-        "File not found": "Datei nicht gefunden",
+        "You are not permission to write this file": "Sie haben keine Berechtigung in diese Datei zu schreiben.",
+        "File not found": "Datei nicht gefunden.",
         "The file is locked.": "Die Datei ist gesperrt.",
         "Share not found": "Share wurde nicht gefunden",
-        "You are not authorized to open this share": "Du hast keine Berechtigung dieses Share zu öffnen",
+        "You are not authorized to open this share": "Sie haben keine Berechtigung dieses Share zu öffnen",
         "Could not write to file.": "Konnte Datei nicht speichern.",
         "Export to Markdown": "Exportieren als Markdown",
         "Export to Text": "Exportieren als Text",
@@ -25,7 +25,7 @@ OC.L10N.register(
         "The file has not been saved. Is it saved?": "Die Datei wurde noch nicht gespeichert. Soll sie gespeichert werden?",
         "Unsaved file": "Ungespeicherte Datei",
         "AutoSave": "AutoSave",
-        "Does not support saving {extension} files.": "Does not support saving {extension} files.",
-        "Unsupported file type: {mimetype}": "Unsupported file type: {mimetype}"
+        "Does not support saving {extension} files.": "Speichern für den Dateityp {extension} nicht unterstützt.",
+        "Unsupported file type: {mimetype}": "Nicht unterstützter Dateityp: {mimetype}"
     }, "nplurals=1; plural=0;"
 );
