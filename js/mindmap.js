@@ -168,7 +168,7 @@ var FilesMindMap = {
 			if ($('#isPublic').val()){
 				putObject.token = $('#sharingToken').val();
 				url = OC.generateUrl('/apps/files_mindmap/share/save');
-				if (this.isSupportedMime($('#mimetype').val())) {
+				if (OCA.FilesMindMap.isSupportedMime($('#mimetype').val())) {
 					putObject.path = '';
 				}
 			} else {
