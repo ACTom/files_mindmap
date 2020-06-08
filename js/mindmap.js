@@ -162,7 +162,8 @@ var FilesMindMap = {
 		plugin.encode(data).then(function(data) {
 			var putObject = {
 				filecontents: data,
-				path: path
+				path: path,
+				mtime: OCA.FilesMindMap._file.mtime // send modification time of currently loaded file
 			};
 	
 			if ($('#isPublic').val()){
@@ -180,7 +181,11 @@ var FilesMindMap = {
 				type: 'PUT',
 				url: url,
 				data: putObject
-			}).done(function(){
+			}).done(function(data){
+				// update modification time
+				try {
+					OCA.FilesMindMap._file.mtime = data.mtime;
+				} catch(e) {}
 				success(t('files_mindmap', 'File Saved'));
 			}).fail(function(jqXHR){
 				var message = t('files_mindmap', 'Save failed');
