@@ -82,8 +82,8 @@ var FilesMindMap = {
 		var shown = true;
 		var viewer = OC.generateUrl('/apps/files_mindmap/');
 		$iframe = $('<iframe id="mmframe" style="width:100%;height:100%;display:block;position:absolute;top:0;' +
-            'z-index:1041;" src="'+viewer+'" sandbox="allow-scripts allow-same-origin allow-popups allow-modals ' +
-            'allow-top-navigation" allowfullscreen="true"/>');
+            'z-index:1041;" src="'+viewer+'" sandbox="allow-scripts allow-same-origin allow-downloads allow-popups allow-modals ' +
+            'allow-top-navigation allow-presentation" allowfullscreen="true"/>');
 
 		if (!$('#mimetype').val()) {
 			FileList.setViewerMode(true);
