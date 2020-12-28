@@ -31,14 +31,17 @@ class InstallStep implements IRepairStep {
     /**
     * @param IOutput $output
     */
-    public function run(IOutput $output) {        
+    public function run(IOutput $output) {
         $currentVersion = implode('.', \OC_Util::getVersion());
 
-        $this->logger->info("Copy mindmap icon to core/img directory.", ["app" => "files_mindmap"]);
-        $appImagePath = __DIR__ . '/../../img/mindmap.svg';
-        $coreImagePath = \OC::$SERVERROOT . '/core/img/filetypes/mindmap.svg';
-        if (!file_exists($coreImagePath) || md5_file($coreImagePath) !== md5_file($appImagePath)) {
-            copy($appImagePath, $coreImagePath);
+        if (version_compare($currentVersion, '21.0.0.11', '<')) {
+            /* Since 21.0.0 beta4, NC has mindmap's mimetype icon */
+            $this->logger->info("Copy mindmap icon to core/img directory.", ["app" => "files_mindmap"]);
+            $appImagePath = __DIR__ . '/../../img/mindmap.svg';
+            $coreImagePath = \OC::$SERVERROOT . '/core/img/filetypes/mindmap.svg';
+            if (!file_exists($coreImagePath) || md5_file($coreImagePath) !== md5_file($appImagePath)) {
+                copy($appImagePath, $coreImagePath);
+            }
         }
 
         if (version_compare($currentVersion, '19.0.0.4', '<')) {
