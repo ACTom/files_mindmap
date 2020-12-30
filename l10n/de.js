@@ -26,6 +26,7 @@ OC.L10N.register(
         "Unsaved file": "Ungespeicherte Datei",
         "AutoSave": "AutoSave",
         "Does not support saving {extension} files.": "Speichern für den Dateityp {extension} nicht unterstützt.",
-        "Unsupported file type: {mimetype}": "Nicht unterstützter Dateityp: {mimetype}"
+        "Unsupported file type: {mimetype}": "Nicht unterstützter Dateityp: {mimetype}",
+        "The file you are working on was updated in the meantime. You cannot save your progress as saving would overwrite these changes. Please reload the page.": "Jemand hat in der Zwischenzeit die Datei aktualisiert, daher kannst du deine Änderungen leider nicht speichern. Bitte lade die Datei neu, um weiteren Datenverlust zu vermeiden."
     }, "nplurals=1; plural=0;"
 );
