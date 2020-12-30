@@ -30,14 +30,18 @@ class UninstallStep implements IRepairStep {
     * @param IOutput $output
     */
     public function run(IOutput $output) {
-        $configDir = \OC::$configDir;
-        $mimetypealiasesFile = $configDir . 'mimetypealiases.json';
-        $mimetypemappingFile = $configDir . 'mimetypemapping.json';
+        $currentVersion = implode('.', \OC_Util::getVersion());     
+        if (version_compare($currentVersion, '19.0.0.4', '<')) {
+            /* Since 19.0.0.beta3, NC has mindmap's mimetype */
+            $configDir = \OC::$configDir;
+            $mimetypealiasesFile = $configDir . 'mimetypealiases.json';
+            $mimetypemappingFile = $configDir . 'mimetypemapping.json';
 
-        $this->removeFromFile($mimetypealiasesFile, ['application/km' => 'mindmap', 'application/x-freemind' => 'mindmap', 'application/vnd.xmind.workbook' => 'mindmap']);
-        $this->removeFromFile($mimetypemappingFile, ['km' => ['application/km'], 'mm' => ['application/x-freemind'], 'xmind' => ['application/vnd.xmind.workbook']]);
-        $this->logger->info("Remove .km,.mm,.xmind from mimetype list.", ["app" => "files_mindmap"]);
-        $this->updateJS->run(new StringInput(''), new ConsoleOutput());
+            $this->removeFromFile($mimetypealiasesFile, ['application/km' => 'mindmap', 'application/x-freemind' => 'mindmap', 'application/vnd.xmind.workbook' => 'mindmap']);
+            $this->removeFromFile($mimetypemappingFile, ['km' => ['application/km'], 'mm' => ['application/x-freemind'], 'xmind' => ['application/vnd.xmind.workbook']]);
+            $this->logger->info("Remove .km,.mm,.xmind from mimetype list.", ["app" => "files_mindmap"]);
+            $this->updateJS->run(new StringInput(''), new ConsoleOutput());
+        }
     }
 
     private function removeFromFile(string $filename, array $data) {

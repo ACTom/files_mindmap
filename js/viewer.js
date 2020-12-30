@@ -123,23 +123,35 @@ redirectIfNotDisplayedInFrame();
 		setStatusMessage: function(msg) {
 			this.showMessage(msg);
 		},
+		updateSaveButtonInfo: function(msg) {
+			$('#save-button').html(msg);
+		},
+		restoreSaveButtonInfo: function(time) {
+			var self = this;
+			setTimeout(function(){
+				self.updateSaveButtonInfo(t('Save'));
+			}, time);
+		},
 		save: function(callback) {
 			var self = this;
 			if (self._changed) {
-				self.setStatusMessage(t('Saving...'));
+				self.updateSaveButtonInfo(t('Saving...'));
 				var data = JSON.stringify(minder.exportJson());
 				window.parent.OCA.FilesMindMap.save(data, function(msg){
-					self.setStatusMessage(msg);
+					self.updateSaveButtonInfo(msg);
 					self._changed = false;
+					self.restoreSaveButtonInfo(3000);
 					if (undefined !== callback) {
 						callback(true, msg);
 					}
 				}, function(msg){
-					self.setStatusMessage(msg);
+					self.updateSaveButtonInfo(msg);
+					self.restoreSaveButtonInfo(3000);
 					if (undefined !== callback) {
 						callback(false, msg);
 					}
 				});
+				self.restoreSaveButtonInfo(6000);
 			}
 		},
 		startAutoSaveTimer: function() {

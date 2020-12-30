@@ -14,14 +14,14 @@ var FilesMindMap = {
 		var self = this;
 		if (!Array.isArray(objs)) {
 			objs = [objs];
-		};
+		}
 		objs.forEach(function(obj){
 			self._extensions.push(obj);
 		});		
 	},
 
 	getExtensionByMime: function(mime) {
-		for (i = 0; i < this._extensions.length; i++) {
+		for (var i = 0; i < this._extensions.length; i++) {
 			var obj = this._extensions[i];
 			if (obj.mimes.indexOf(mime) >= 0) {
 				return obj;
@@ -82,8 +82,8 @@ var FilesMindMap = {
 		var shown = true;
 		var viewer = OC.generateUrl('/apps/files_mindmap/');
 		$iframe = $('<iframe id="mmframe" style="width:100%;height:100%;display:block;position:absolute;top:0;' +
-            'z-index:1041;" src="'+viewer+'" sandbox="allow-scripts allow-same-origin allow-popups allow-modals ' +
-            'allow-top-navigation" allowfullscreen="true"/>');
+            'z-index:1041;" src="'+viewer+'" sandbox="allow-scripts allow-same-origin allow-downloads allow-popups allow-modals ' +
+            'allow-top-navigation allow-presentation" allowfullscreen="true"/>');
 
 		if (!$('#mimetype').val()) {
 			FileList.setViewerMode(true);
@@ -159,9 +159,9 @@ var FilesMindMap = {
 			return;
 		}
 
-		plugin.encode(data).then(function(data) {
+		plugin.encode(data).then(function(data2) {
 			var putObject = {
-				filecontents: data,
+				filecontents: data2,
 				path: path,
 				mtime: OCA.FilesMindMap._file.mtime // send modification time of currently loaded file
 			};
@@ -301,6 +301,7 @@ var FilesMindMap = {
 		if (context.dir === '/') {
 			fullName = '/' + fileName;
 		}
+		this._file.fullName = fullName;
 		this.show();
 	},
 
@@ -473,9 +474,9 @@ FilesMindMap.Extensions.XMind = {
             if (tmp.length && tmp.length > 0) { //多个子节点
                 obj.children = [];
 
-                for (var i in tmp) {
+                for (var ii in tmp) {
                     obj.children.push({});
-                    this.processTopic(tmp[i], obj.children[i]);
+                    this.processTopic(tmp[ii], obj.children[ii]);
                 }
 
             } else { //一个子节点
@@ -500,7 +501,7 @@ FilesMindMap.Extensions.XMind = {
                 if (contentFile != null) {
                     contentFile.async('text').then(function(text){
                         try {
-                            json = self.toKm(text);
+                            var json = self.toKm(text);
                             resolve(json);
                         } catch (e) {
                             reject(e);
@@ -549,8 +550,6 @@ FilesMindMap.Util = {
         if (!node) return null;
         var self = this;
         var txt = '', obj = null, att = null;
-        var nt = node.nodeType, nn = this.jsVar(node.localName || node.nodeName);
-        var nv = node.text || node.nodeValue || '';
         
         if (node.childNodes) {
             if (node.childNodes.length > 0) {
@@ -566,7 +565,7 @@ FilesMindMap.Util = {
                     else if (cnt == 3 || cnt == 4 || !cnn) {
                         if (cnv.match(/^\s+$/)) {
                             return;
-                        };
+                        }
                         txt += cnv.replace(/^\s+/, '').replace(/\s+$/, '');
                     } else {
                         obj = obj || {};
@@ -579,11 +578,11 @@ FilesMindMap.Util = {
                             obj[cnn].push(self.parseNode(cn, true));
                         } else {
                             obj[cnn] = self.parseNode(cn);
-                        };
-                    };
+                        }
+                    }
                 });
-            };
-        };
+            }
+        }
         if (node.attributes && node.tagName !='title') {
             if (node.attributes.length > 0) {
                 att = {}; obj = obj || {};
@@ -593,27 +592,25 @@ FilesMindMap.Util = {
                     att[atn] = atv;
                     if (obj[atn]) {
                         obj[cnn] = this.toArray(obj[cnn]);
-    
                         obj[atn][obj[atn].length] = atv;
-                        obj[atn].length = obj[atn].length;
                     }
                     else {
                         obj[atn] = atv;
-                    };
+                    }
                 });
-            };
-        };
+            }
+        }
         if (obj) {
             obj = Object.assign({}, (txt != '' ? new String(txt) : {}), obj || {});
             txt = (obj.text) ? ([obj.text || '']).concat([txt]) : txt;
             if (txt) obj.text = txt;
             txt = '';
-        };
+        }
         var out = obj || txt;
         return out;
     },
     parseXML: function (xml) {
-        root = (xml.nodeType == 9) ? xml.documentElement : xml;
+        var root = (xml.nodeType == 9) ? xml.documentElement : xml;
         return this.parseNode(root, true);
     },
     xml2json: function (str) {
