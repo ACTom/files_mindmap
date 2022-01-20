@@ -26,6 +26,7 @@ OC.L10N.register(
         "Unsaved file": "未保存的文件",
         "AutoSave": "自动保存",
         "Does not support saving {extension} files.": "不支持保存 {extension} 类型的文件！",
-        "Unsupported file type: {mimetype}": "不支持的文件类型：{mimetype}"
+        "Unsupported file type: {mimetype}": "不支持的文件类型：{mimetype}",
+        "The file you are working on was updated in the meantime. You cannot save your progress as saving would overwrite these changes. Please reload the page.": "您无法保存当前文件，因为您在您编辑这个文件期间这个文件已被其他人更新，请重新加载当前页面以重新启用更新。"
     }, "nplurals=1; plural=0;"
 );
