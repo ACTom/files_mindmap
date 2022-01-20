@@ -1,12 +1,12 @@
 OC.L10N.register(
     "files_mindmap",
     {
-        "New mind map file": "Nuova mappa mentale",
-        "New mind map.km": "Nuova mappa mentale.km",
-        "Main Topic": "Soggetto Principale",
+        "New mind map file": "Nuova Mindmap",
+        "New mind map.km": "Nuova Mindmap.km",
+        "Main Topic": "Tema Principale",
         "Saving...": "Salvataggio...",
-        "This file is not a valid mind map file and may cause file corruption if you continue editing.": "Questo file non è un file di mappa mentale valido e può causare danni al file se si continua la modifica.",
-        "Load file fail!": "Caricamento file fallito",
+        "This file is not a valid mind map file and may cause file corruption if you continue editing.": "Questo non è un file Mindmap valido e potrebbe essere danneggiato proseguendo nella modifica.",
+        "Load file fail!": "Caricamento file fallito!",
         "File Saved": "File Salvato",
         "Save failed": "Salvataggio fallito",
         "Export": "Esporta",
@@ -24,8 +24,8 @@ OC.L10N.register(
         "Save":"Salva",
         "The file has not been saved. Is it saved?": "Il file non è stato salvato. È salvato?",
         "Unsaved file": "File non salvato",
-        "AutoSave": "AutoSave",
-        "Does not support saving {extension} files.": "Does not support saving {extension} files.",
-        "Unsupported file type: {mimetype}": "Unsupported file type: {mimetype}"
+        "AutoSave": "Salvataggio automatico",
+        "Does not support saving {extension} files.": "Il salvataggio dei file {extension} non è supportato.",
+        "Unsupported file type: {mimetype}": "Tipo di file non supportato: {mimetype}"
     }, "nplurals=1; plural=0;"
 );

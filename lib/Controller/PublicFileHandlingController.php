@@ -30,6 +30,7 @@ use OCP\Files\ForbiddenException;
 use OCP\Files\GenericFileException;
 use OCP\Files\NotFoundException;
 use OCP\IL10N;
+use OCP\ILogger;
 use OCP\IRequest;
 use OCP\ISession;
 use OCP\Lock\LockedException;
@@ -40,6 +41,9 @@ class PublicFileHandlingController extends Controller{
 
     /** @var IL10N */
     private $l;
+
+    /** @var ILogger */
+    private $logger;
 
     /** @var ShareManager */
     private $shareManager;
@@ -58,10 +62,12 @@ class PublicFileHandlingController extends Controller{
     public function __construct($AppName,
                                 IRequest $request,
                                 IL10N $l10n,
+                                ILogger $logger,
                                 ShareManager $shareManager,
                                 ISession $session) {
         parent::__construct($AppName, $request);
         $this->l = $l10n;
+        $this->logger = $logger;
         $this->shareManager = $shareManager;
         $this->session = $session;
     }
@@ -155,7 +161,7 @@ class PublicFileHandlingController extends Controller{
      * @throws \OCP\Files\InvalidPathException
      * @throws \OCP\Files\NotPermittedException
      */
-    public function save($token, $filecontents, $path) {
+    public function save($token, $filecontents, $path, $mtime) {
         try {
             $share = $this->shareManager->getShareByToken($token);
         } catch (ShareNotFound $e) {
@@ -193,6 +199,10 @@ class PublicFileHandlingController extends Controller{
         }
 
         if($file->isUpdateable()) {
+            if ($mtime != $file->getMTime()) {
+                $this->logger->error("Anonymous cannot save shared mindmap (someone updated it in the meantime): {$mtime} vs. {$file->getMTime()} {$file->getPath()}", ['app' => 'files_mindmap']);
+                return new DataResponse([ 'message' => $this->l->t('The file you are working on was updated in the meantime. You cannot save your progress as saving would overwrite these changes. Please reload the page.')],Http::STATUS_BAD_REQUEST);
+            }
             try {
                 $file->putContent($filecontents);
             } catch (LockedException $e) {
