@@ -112,10 +112,11 @@ class PublicFileHandlingController extends Controller{
         if ($node instanceof Folder) {
             $dir = $this->request->getParam('dir');
             $filename = $this->request->getParam('filename');
-            $fullpath = trim($dir.$filename);
-            if (!$fullpath) {
+            $fullpathRAW = trim($dir.$filename);
+            if (!$fullpathRAW) {
                 return new DataResponse(['message' => $this->l->t('File not found')], Http::STATUS_NOT_FOUND);
             }
+            $fullpath = trim($dir . '/' . $filename);
             try {
                 $fileNode = $node->get($fullpath);
             } catch (NotFoundException $e) {
