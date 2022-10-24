@@ -2,7 +2,7 @@
   /** @var array $_ */
   /** @var OCP\IURLGenerator $urlGenerator */
   $urlGenerator = $_['urlGenerator'];
-  $version = \OCP\App::getAppVersion('files_mindmap');
+  $version = \OC_App::getAppVersion('files_mindmap');
   $lang = $_['lang'];
   if (method_exists(\OC::$server, 'getContentSecurityPolicyNonceManager')) {
       $nonce = \OC::$server->getContentSecurityPolicyNonceManager()->getNonce();
