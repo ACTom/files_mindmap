@@ -4,8 +4,8 @@
     "New mind map.km": "新增心智圖.km",
     "Main Topic": "中心主題",
     "Saving...": "正在儲存...",
-    "This file is not a valid mind map file and may cause file corruption if you continue editing.": "這個檔案心智圖格式，若繼續編輯可能使檔案損毀。",
-    "Load file fail!": "載入檔案失敗！",
+    "This file is not a valid mind map file and may cause file corruption if you continue editing.": "這個檔案不是正確的心智圖格式，若繼續編輯可能造成檔案損毀。",
+    "Load file fail!": "載入檔案失敗",
     "File Saved": "檔案已儲存",
     "Save failed": "儲存失敗",
     "Export": "匯出",
@@ -23,10 +23,10 @@
     "Save": "儲存",
     "The file has not been saved. Is it saved?": "檔案尚未儲存，是否儲存？",
     "Unsaved file": "尚未儲存的檔案",
-    "AutoSave": "自动儲存",
-    "Does not support saving {extension} files.": "不支持儲存 {extension} 类型的檔案！",
-    "Unsupported file type: {mimetype}": "不支持的檔案类型：{mimetype}",
-    "The file you are working on was updated in the meantime. You cannot save your progress as saving would overwrite these changes. Please reload the page.": "您无法保存当前文件，因为您在您编辑这个文件期间这个文件已被其他人更新，请重新加载当前页面以重新启用更新。"
+    "AutoSave": "自動儲存",
+    "Does not support saving {extension} files.": "不支援儲存為 {extension} 檔案類型",
+    "Unsupported file type: {mimetype}": "不支援的檔案類型：{mimetype}",
+    "The file you are working on was updated in the meantime. You cannot save your progress as saving would overwrite these changes. Please reload the page.": "您無法儲存目前的檔案，因為您在編輯檔案的過程中這個檔案已經被其它人更新過，請重新載入網頁以取得最新的內容。"
   },
   "pluralForm": "nplurals=1; plural=0;"
 }
