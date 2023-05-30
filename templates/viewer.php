@@ -74,7 +74,7 @@
             text-decoration: none;
             outline: none;
             cursor: pointer;
-			z-index: 100000;
+			z-index: 1000;
         }
         #close-button:hover {
             width: 20px;
@@ -95,7 +95,7 @@
         #autosave-div {
             position: absolute;
             right: 280px;
-            z-index: 100000;
+            z-index: 10000;
             width: 100px;
         }
         #autosave-checkbox {
@@ -104,14 +104,14 @@
         #save-div {
             position: absolute;
             right: 180px;
-            z-index: 100000;
+            z-index: 10000;
             width: 60px;
         }
 
         #export-button {
             position: absolute;
             right: 40px;
-            z-index: 100000;
+            z-index: 10000;
         }
 	</style>
 </head>
