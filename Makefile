@@ -7,7 +7,7 @@ source_dir=$(build_dir)/source
 sign_dir=$(build_dir)/sign
 package_name=$(app_name)
 cert_dir=$(CURDIR)/../../key
-version+=0.0.28
+version+=0.0.29
 
 all: appstore
 

@@ -42,30 +42,6 @@ class InstallStep implements IRepairStep {
             if (!file_exists($coreImagePath) || md5_file($coreImagePath) !== md5_file($appImagePath)) {
                 copy($appImagePath, $coreImagePath);
             }
-        }
-
-        if (version_compare($currentVersion, '19.0.0.4', '<')) {
-            /* Since 19.0.0.beta3, NC has mindmap's mimetype */
-            $configDir = \OC::$configDir;
-            $mimetypealiasesFile = $configDir . 'mimetypealiases.json';
-            $mimetypemappingFile = $configDir . 'mimetypemapping.json';
-
-            $this->appendToFile($mimetypealiasesFile, ['application/km' => 'mindmap', 'application/x-freemind' => 'mindmap', 'application/vnd.xmind.workbook' => 'mindmap']);
-            $this->appendToFile($mimetypemappingFile, ['km' => ['application/km'], 'mm' => ['application/x-freemind'], 'xmind' => ['application/vnd.xmind.workbook']]);
-            $this->logger->info("Add .km,.mm,.xmind to mimetype list.", ["app" => "files_mindmap"]);
-            $this->updateJS->run(new StringInput(''), new ConsoleOutput());
-        }        
-    }
-
-    private function appendToFile(string $filename, array $data) {
-        $obj = [];
-        if (file_exists($filename)) {
-            $content = file_get_contents($filename);
-            $obj = json_decode($content, true);
-        }
-        foreach ($data as $key => $value) {
-            $obj[$key] = $value;
-        }
-        file_put_contents($filename, json_encode($obj,  JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES));
+        }    
     }
 }
