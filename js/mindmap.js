@@ -6,8 +6,6 @@ var FilesMindMap = {
 	_extensions: [],
 	init: function() {
 		this.registerExtension([FilesMindMap.Extensions.KM, FilesMindMap.Extensions.FreeMind, FilesMindMap.Extensions.XMind]);
-		this.registerFileActions();
-		this.hackFileIcon();
 	},
 
 	registerExtension: function(objs) {
@@ -248,12 +246,12 @@ var FilesMindMap = {
 	 * @param fileActions
 	 * @private
 	 */
-	registerFileActions: function() {
+	registerFileActions: function(fileActions) {
 		var mimes = this.getSupportedMimetypes(),
 			_self = this;
 
 		$.each(mimes, function(key, value) {
-			OCA.Files.fileActions.registerAction({
+			fileActions.registerAction({
 				name: 'Edit',
 				mime: value,
 				actionHandler: _.bind(_self._onEditorTrigger, _self),
@@ -262,7 +260,7 @@ var FilesMindMap = {
 					return OC.imagePath('core', 'actions/edit');
 				}
 			});
-			OCA.Files.fileActions.setDefault(value, 'Edit');
+			fileActions.setDefault(value, 'Edit');
 		});
 	},
 
@@ -655,13 +653,24 @@ FilesMindMap.NewFileMenuPlugin = {
 	}
 };
 
+FilesMindMap.FileListPlugin = {
+	attach: function(fileList) {
+		OCA.FilesMindMap.registerFileActions(fileList.fileActions);
+	}
+};
 
 OCA.FilesMindMap = FilesMindMap;
 
-OC.Plugins.register('OCA.Files.NewFileMenu', FilesMindMap.NewFileMenuPlugin);
+// register mime types
+FilesMindMap.init();
 
-$(document).ready(function(){
-	OCA.FilesMindMap.init();
+// Declare the plugin and its attachments
+OC.Plugins.register('OCA.Files.NewFileMenu', OCA.FilesMindMap.NewFileMenuPlugin);
+OC.Plugins.register('OCA.Files.FileList', OCA.FilesMindMap.FileListPlugin);
+
+// do the "hacking" DOM jobs
+window.addEventListener('DOMContentLoaded', function () {
+	OCA.FilesMindMap.hackFileIcon();
 	if ($('#isPublic').val() && OCA.FilesMindMap.isSupportedMime($('#mimetype').val())) {
 		var sharingToken = $('#sharingToken').val();
 		var downloadUrl = OC.generateUrl('/s/{token}/download', {token: sharingToken});
