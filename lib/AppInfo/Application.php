@@ -39,6 +39,11 @@ class Application extends App implements IBootstrap {
 			LoadAdditionalScriptsEvent::class,
 			LoadAdditionalScripts::class
 		);
+
+		$container = $this->getContainer();
+		/** @var  IEventDispatcher $eventDispatcher */
+		$eventDispatcher = $container->get(IEventDispatcher::class);
+		$eventDispatcher->addListener('OCA\Files_Sharing::loadAdditionalScripts', array('OCA\Files_MindMap\Listener\LoadAdditionalScripts','additionalScripts'));
 	}
 
 	public function boot(IBootContext $context): void {
