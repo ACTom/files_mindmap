@@ -15,7 +15,10 @@ class LoadAdditionalScripts implements IEventListener {
 		if (!($event instanceof LoadAdditionalScriptsEvent)) {
 			return;
 		}
+		self::additionalScripts();
+	}
 
+	public static function additionalScripts() {
 		Util::addStyle(Application::APPNAME, 'style');
 		Util::addScript(Application::APPNAME, 'jszip');
 		Util::addScript(Application::APPNAME, 'mindmap');
