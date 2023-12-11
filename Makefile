@@ -9,7 +9,7 @@ package_name=$(app_name)
 cert_dir=$(CURDIR)/../../key
 version+=0.0.30
 
-all: appstore
+all: build-front appstore
 
 release: appstore create-tag
 
@@ -19,6 +19,10 @@ create-tag:
 
 clean:
 	rm -rf $(build_dir)
+
+build-front:
+	npm ci
+	npm run build
 
 appstore: clean
 	mkdir -p $(sign_dir)

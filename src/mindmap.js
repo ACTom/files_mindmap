@@ -1,7 +1,26 @@
+import JSZip from 'jszip'
+import { basename, extname } from 'path'
+import SvgPencil from '@mdi/svg/svg/pencil.svg?raw'
+
+import {
+	DefaultType,
+	FileAction,
+	addNewFileMenuEntry,
+	registerFileAction,
+	davGetClient,
+	davResultToNode,
+	File,
+	Permission,
+	davGetDefaultPropfind,
+	getNavigation,
+} from '@nextcloud/files'
+import { emit } from '@nextcloud/event-bus'
+import axios from '@nextcloud/axios'
+import { getCurrentUser } from '@nextcloud/auth'
+
 var FilesMindMap = {
 	_currentContext: null,
 	_file: {},
-	_fileList: null,
 	_lastTitle: '',
 	_extensions: [],
 	init: function() {
@@ -15,7 +34,7 @@ var FilesMindMap = {
 		}
 		objs.forEach(function(obj){
 			self._extensions.push(obj);
-		});		
+		});
 	},
 
 	getExtensionByMime: function(mime) {
@@ -46,16 +65,12 @@ var FilesMindMap = {
 		OC.Notification.hide(id, t);
 	},
 
-	hide: function() {
+	hide: async function() {
 		$('#mmframe').remove();
 		if ($('#isPublic').val() && $('#filesApp').val()){
 			$('#controls').removeClass('hidden');
 			$('#content').removeClass('full-height');
 			$('footer').removeClass('hidden');
-		}
-
-		if (!$('#mimetype').val()) {
-			FileList.setViewerMode(false);
 		}
 
 		// replace the controls with our own
@@ -64,7 +79,9 @@ var FilesMindMap = {
 		document.title = this._lastTitle;
 
 		if (!$('#mimetype').val()) {
-			this._fileList.addAndFetchFileInfo(this._file.dir + '/' + this._file.name, '');
+			const client = davGetClient()
+			const response = await client.stat(this._file.root + '/' + this._file.name, { details: true, data: davGetDefaultPropfind() })
+			emit('files:node:updated', davResultToNode(response.data))
 		} else {
 			//TODO
 		}
@@ -83,10 +100,6 @@ var FilesMindMap = {
             'z-index:1041;" src="'+viewer+'" sandbox="allow-scripts allow-same-origin allow-downloads allow-popups allow-modals ' +
             'allow-top-navigation allow-presentation" allowfullscreen="true"/>');
 
-		if (!$('#mimetype').val()) {
-			FileList.setViewerMode(true);
-		}
-
 		if ($('#isPublic').val()) {
 			// force the preview to adjust its height
 			$('#preview').append($iframe).css({height: '100%'});
@@ -98,7 +111,7 @@ var FilesMindMap = {
 			$('.directDownload').addClass('hidden');
 			$('#controls').addClass('hidden');
 		} else {
-			$('#app-content').after($iframe);
+			$('#app-content-vue').after($iframe);
 		}
 
 		$("#pageWidthOption").attr("selected","selected");
@@ -163,7 +176,7 @@ var FilesMindMap = {
 				path: path,
 				mtime: OCA.FilesMindMap._file.mtime // send modification time of currently loaded file
 			};
-	
+
 			if ($('#isPublic').val()){
 				putObject.token = $('#sharingToken').val();
 				url = OC.generateUrl('/apps/files_mindmap/share/save');
@@ -173,8 +186,8 @@ var FilesMindMap = {
 			} else {
 				url = OC.generateUrl('/apps/files_mindmap/ajax/savefile');
 			}
-	
-	
+
+
 			$.ajax({
 				type: 'PUT',
 				url: url,
@@ -192,7 +205,7 @@ var FilesMindMap = {
 				}catch(e){}
 				fail(message);
 			});
-		});		
+		});
 	},
 
 	load: function(success, failure) {
@@ -219,7 +232,7 @@ var FilesMindMap = {
 			if (!plugin || plugin.decode === null) {
 				fail(t('files_mindmap', 'Unsupported file type: {mimetype}', {mimetype: data.mime}));
 			}
-			
+
 			plugin.decode(data.filecontents).then(function(kmdata){
 				data.filecontents = typeof kmdata === 'object' ? JSON.stringify(kmdata) : kmdata;
 				data.supportedWrite = true;
@@ -243,25 +256,35 @@ var FilesMindMap = {
 	},
 
 	/**
-	 * @param fileActions
 	 * @private
 	 */
-	registerFileActions: function(fileActions) {
+	registerFileActions: function () {
 		var mimes = this.getSupportedMimetypes(),
 			_self = this;
 
-		$.each(mimes, function(key, value) {
-			fileActions.registerAction({
-				name: 'Edit',
-				mime: value,
-				actionHandler: _.bind(_self._onEditorTrigger, _self),
-				permissions: OC.PERMISSION_READ,
-				icon: function () {
-					return OC.imagePath('core', 'actions/edit');
+		registerFileAction(new FileAction({
+			id: 'file_mindmap',
+			displayName() {
+				return t('files_mindmap', 'Edit')
+			},
+			iconSvgInline: () => SvgPencil,
+
+			enabled(nodes) {
+				return nodes.length === 1 && mimes.includes(nodes[0].mime) && (nodes[0].permissions & OC.PERMISSION_READ) !== 0
+			},
+
+			async exec(node, view) {
+				try {
+					_self._onEditorTrigger(node.basename, { dir: node.dirname, root: node.root })
+					return true
+				} catch (error) {
+					_self.showMessage(error)
+					return false
 				}
-			});
-			fileActions.setDefault(value, 'Edit');
-		});
+			},
+
+			default: DefaultType.HIDDEN,
+		}))
 	},
 
 	hackFileIcon: function() {
@@ -269,7 +292,7 @@ var FilesMindMap = {
 			$("#filestable")
 			.find("tr[data-type=file]")
 			.each(function () {
-				if (($(this).attr("data-mime") == "application/km" || $(this).attr("data-mime") == "application/x-freemind") 
+				if (($(this).attr("data-mime") == "application/km" || $(this).attr("data-mime") == "application/x-freemind")
 					&& ($(this).find("div.thumbnail").length > 0)) {
 						if ($(this).find("div.thumbnail").hasClass("icon-mindmap") == false) {
 							$(this).find("div.thumbnail").addClass("icon icon-mindmap");
@@ -293,8 +316,8 @@ var FilesMindMap = {
 	_onEditorTrigger: function(fileName, context) {
 		this._currentContext = context;
 		this._file.name = fileName;
+		this._file.root = context.root;
 		this._file.dir = context.dir;
-		this._fileList = context.fileList;
 		var fullName = context.dir + '/' + fileName;
 		if (context.dir === '/') {
 			fullName = '/' + fileName;
@@ -342,7 +365,7 @@ FilesMindMap.Extensions.FreeMind = {
         return new Promise(function(resolve, reject) {
             try {
                 var result = self.toKm(data);
-                resolve(result); 
+                resolve(result);
             } catch (e) {
                 reject(e);
             }
@@ -535,8 +558,8 @@ FilesMindMap.Util = {
 			return new Blob([array]);
 		}
 	},
-    jsVar: function (s) { 
-        return String(s || '').replace(/-/g,"_"); 
+    jsVar: function (s) {
+        return String(s || '').replace(/-/g,"_");
     },
     toArray: function (obj){
         if (!Array.isArray(obj)) {
@@ -548,13 +571,13 @@ FilesMindMap.Util = {
         if (!node) return null;
         var self = this;
         var txt = '', obj = null, att = null;
-        
+
         if (node.childNodes) {
             if (node.childNodes.length > 0) {
                 node.childNodes.forEach(function(cn) {
                     var cnt = cn.nodeType, cnn = self.jsVar(cn.localName || cn.nodeName);
                     var cnv = cn.text || cn.nodeValue || '';
-        
+
                     /* comment */
                     if (cnt == 8) {
                         return; // ignore comment node
@@ -572,7 +595,7 @@ FilesMindMap.Util = {
                                 obj[cnn] = self.toArray(obj[cnn]);
                             }
                             obj[cnn] = self.toArray(obj[cnn]);
-    
+
                             obj[cnn].push(self.parseNode(cn, true));
                         } else {
                             obj[cnn] = self.parseNode(cn);
@@ -614,49 +637,70 @@ FilesMindMap.Util = {
     xml2json: function (str) {
         var domParser = new DOMParser();
         var dom = domParser.parseFromString(str, 'application/xml');
-    
+
         var json = this.parseXML(dom);
         return json;
     },
 };
 
-FilesMindMap.NewFileMenuPlugin = {
-
-	attach: function(menu) {
-		var fileList = menu.fileList;
-
-		// only attach to main file list, public view is not supported yet
-		if (fileList.id !== 'files') {
-			return;
-		}
-
-		// register the new menu entry
-		menu.addMenuEntry({
-			id: 'mindmapfile',
-			displayName: t('files_mindmap', 'New mind map file'),
-			templateName: t('files_mindmap', 'New mind map.km'),
-			iconClass: 'icon-mindmap',
-			fileType: 'application/km',
-			actionHandler: function(name) {
-				var dir = fileList.getCurrentDirectory();
-				fileList.createFile(name).then(function() {
-					FilesMindMap._onEditorTrigger(
-						name,
-						{
-							fileList: fileList,
-							dir: dir
-						}
-					);
-				});
-			}
-		});
+// TODO: move to @nextcloud/files
+function getUniqueName(name, names) {
+	let newName = name
+	let i = 1
+	while (names.includes(newName)) {
+		const ext = extname(name)
+		newName = `${basename(name, ext)} (${i++})${ext}`
 	}
-};
+	return newName
+}
 
-FilesMindMap.FileListPlugin = {
-	attach: function(fileList) {
-		OCA.FilesMindMap.registerFileActions(fileList.fileActions);
-	}
+FilesMindMap.registerNewFileMenuPlugin = () => {
+	addNewFileMenuEntry({
+		id: 'mindmapfile',
+		displayName: t('files_mindmap', 'New mind map file'),
+		iconClass: 'icon-mindmap',
+		enabled() {
+			// only attach to main file list, public view is not supported yet
+			return getNavigation()?.active?.id === 'files'
+		},
+		async handler(context, content) {
+			const contentNames = content.map((node) => node.basename)
+			const fileName = getUniqueName(t('files', "New mindmap.km"), contentNames)
+			const source = context.encodedSource + '/' + encodeURIComponent(fileName)
+
+			const response = await axios({
+				method: 'PUT',
+				url: source,
+				headers: {
+					Overwrite: 'F',
+				},
+				data: ' ',
+			})
+
+			const fileid = parseInt(response.headers['oc-fileid'])
+			const file = new File({
+				source: context.source + '/' + fileName,
+				id: fileid,
+				mtime: new Date(),
+				mime: 'application/km',
+				owner: getCurrentUser()?.uid || null,
+				permissions: Permission.ALL,
+				root: context?.root || '/files/' + getCurrentUser()?.uid,
+			})
+
+			FilesMindMap.showMessage(t('files_mindmap', 'Created "{name}"', { name: fileName }))
+
+			emit('files:node:created', file)
+
+			FilesMindMap._onEditorTrigger(
+				fileName,
+				{
+					dir: context.path,
+					root: context.root,
+				}
+			)
+		},
+	})
 };
 
 OCA.FilesMindMap = FilesMindMap;
@@ -664,13 +708,13 @@ OCA.FilesMindMap = FilesMindMap;
 // register mime types
 FilesMindMap.init();
 
-// Declare the plugin and its attachments
-OC.Plugins.register('OCA.Files.NewFileMenu', OCA.FilesMindMap.NewFileMenuPlugin);
-OC.Plugins.register('OCA.Files.FileList', OCA.FilesMindMap.FileListPlugin);
-
 // do the "hacking" DOM jobs
 window.addEventListener('DOMContentLoaded', function () {
+	// Declare the plugin and its attachments
+	OCA.FilesMindMap.registerNewFileMenuPlugin()
+	OCA.FilesMindMap.registerFileActions();
 	OCA.FilesMindMap.hackFileIcon();
+
 	if ($('#isPublic').val() && OCA.FilesMindMap.isSupportedMime($('#mimetype').val())) {
 		var sharingToken = $('#sharingToken').val();
 		var downloadUrl = OC.generateUrl('/s/{token}/download', {token: sharingToken});
