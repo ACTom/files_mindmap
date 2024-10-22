@@ -1,0 +1,31 @@
+# SPDX-FileCopyrightText: 2021-2024 Nextcloud GmbH and Nextcloud contributors
+# SPDX-License-Identifier: MIT
+
+name: Packaging
+on: push
+
+permissions:
+  contents: read
+
+jobs:
+  release-tarball:
+    runs-on: ubuntu-latest
+    name: Build release tarball
+    steps:
+      - name: Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+      - name: Read package.json node and npm engines version
+        uses: skjnldsv/read-package-engines-version-actions@8205673bab74a63eb9b8093402fd9e0e018663a1 # v2.2
+        id: versions
+      - name: Set up Nextcloud env
+        uses: ChristophWurst/setup-nextcloud@fc0790385c175d97e88a7cb0933490de6e990374 # v0.3.2
+        with:
+          node-version: ${{ steps.versions.outputs.nodeVersion }}
+          npm-version: ${{ steps.versions.outputs.npmVersion }}
+          tools: 'krankerl'
+      - name: Package app
+        run: krankerl package
+      - uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32 # v3
+        with:
+          path: build/artifacts/files_mindmap.tar.gz
+          if-no-files-found: error
