@@ -18,7 +18,7 @@
 	<screenshot small-thumbnail="https://raw.githubusercontent.com/ACTom/files_mindmap/master/screenshots/2-small.png">https://raw.githubusercontent.com/ACTom/files_mindmap/master/screenshots/2.png</screenshot>
 	<screenshot small-thumbnail="https://raw.githubusercontent.com/ACTom/files_mindmap/master/screenshots/3-small.png">https://raw.githubusercontent.com/ACTom/files_mindmap/master/screenshots/3.png</screenshot>
 	<dependencies>
-		<nextcloud min-version="28" max-version="28"/>
+		<nextcloud min-version="28" max-version="30"/>
 	</dependencies>
 	<repair-steps>
 		<install>
