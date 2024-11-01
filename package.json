@@ -26,16 +26,16 @@
     "watch": "vite --mode development build --watch"
   },
   "dependencies": {
-    "@mdi/svg": "^7.3.67",
-    "@nextcloud/axios": "^2.4.0",
-    "@nextcloud/event-bus": "^3.1.0",
-    "@nextcloud/files": "^3.0.0",
+    "@mdi/svg": "^7.4.47",
+    "@nextcloud/axios": "^2.5.1",
+    "@nextcloud/event-bus": "^3.3.1",
+    "@nextcloud/files": "^3.9.1",
     "jszip": "^3.10.1"
   },
   "devDependencies": {
-    "@nextcloud/browserslist-config": "^3.0.0",
-    "@nextcloud/eslint-config": "^v8.3.0",
-    "@nextcloud/vite-config": "^1.0.1",
-    "vite-plugin-static-copy": "^0.17.1"
+    "@nextcloud/browserslist-config": "^3.0.1",
+    "@nextcloud/eslint-config": "^v8.4.1",
+    "@nextcloud/vite-config": "^2.2.2",
+    "vite-plugin-static-copy": "^2.0.0"
   }
 }
