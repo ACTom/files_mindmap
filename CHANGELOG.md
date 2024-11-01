@@ -18,3 +18,4 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Rename app to files_mindmap2
 - Add workflow for packaging
 - Add changelog
+- Update dependencies
