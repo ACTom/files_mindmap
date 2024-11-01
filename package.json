@@ -1,17 +1,17 @@
 {
-  "name": "files_mindmap",
-  "version": "0.0.30",
+  "name": "files_mindmap2",
+  "version": "0.0.40",
   "description": "A Mind map editor",
   "author": "Jingtao Yan",
   "license": "AGPL-3.0-or-later",
   "type": "module",
   "bugs": {
-    "url": "https://github.com/ACTom/files_mindmap/issues"
+    "url": "https://github.com/onny/files_mindmap/issues"
   },
-  "homepage": "https://github.com/ACTom/files_mindmap#readme",
+  "homepage": "https://github.com/onny/files_mindmap#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ACTom/files_mindmap.git"
+    "url": "git+https://github.com/onny/files_mindmap.git"
   },
   "engines": {
     "node": "^20.0.0",

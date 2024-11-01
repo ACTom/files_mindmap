@@ -14,7 +14,7 @@ redirectIfNotDisplayedInFrame();
 
 (function() {
 	var t = function(msg) {
-		return window.parent.t('files_mindmap', msg);
+		return window.parent.t('files_mindmap2', msg);
 	};
 
 	var lang = window.lang || 
@@ -172,14 +172,14 @@ redirectIfNotDisplayedInFrame();
 		getAutoSaveStatus: function() {
 			var status = $('#autosave-checkbox').is(':checked');
 			if (window.localStorage) {
-				localStorage.setItem('apps.files_mindmap.autosave', status);
+				localStorage.setItem('apps.files_mindmap2.autosave', status);
 			}
 			return status;
 		},
 		loadAutoSaveStatus: function() {
 			var status = true;
 			if (window.localStorage) {
-				if (localStorage.getItem('apps.files_mindmap.autosave') === 'false') {
+				if (localStorage.getItem('apps.files_mindmap2.autosave') === 'false') {
 					status = false;
 				}
 			}

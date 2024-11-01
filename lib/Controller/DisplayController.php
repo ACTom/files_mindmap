@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace OCA\Files_MindMap\Controller;
+namespace OCA\Files_MindMap2\Controller;
 
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\ContentSecurityPolicy;

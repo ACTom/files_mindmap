@@ -15,7 +15,7 @@ export default createAppConfig({
 			renderBuiltUrl(filename) {
 				return {
 					// already contains the "js/" prefix as it is our output file configuration
-					runtime: `OC.filePath('files_mindmap', '', '${filename}')`,
+					runtime: `OC.filePath('files_mindmap2', '', '${filename}')`,
 				}
 			},
 		},

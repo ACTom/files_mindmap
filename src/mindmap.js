@@ -95,7 +95,7 @@ var FilesMindMap = {
 		var self = this;
 		var $iframe;
 		var shown = true;
-		var viewer = OC.generateUrl('/apps/files_mindmap/');
+		var viewer = OC.generateUrl('/apps/files_mindmap2/');
 		$iframe = $('<iframe id="mmframe" style="width:100%;height:100%;display:block;position:absolute;top:0;' +
             'z-index:1041;" src="'+viewer+'" allowfullscreen="true"/>');
 
@@ -165,7 +165,7 @@ var FilesMindMap = {
 		/* 当encode方法没实现的时候无法保存 */
 		var plugin = this.getExtensionByMime(this._file.mime);
 		if (plugin.encode === null) {
-			fail(t('files_mindmap', 'Does not support saving {extension} files.', {extension: plugin.name}));
+			fail(t('files_mindmap2', 'Does not support saving {extension} files.', {extension: plugin.name}));
 			return;
 		}
 
@@ -178,12 +178,12 @@ var FilesMindMap = {
 
 			if ($('#isPublic').val()){
 				putObject.token = $('#sharingToken').val();
-				url = OC.generateUrl('/apps/files_mindmap/share/save');
+				url = OC.generateUrl('/apps/files_mindmap2/share/save');
 				if (OCA.FilesMindMap.isSupportedMime($('#mimetype').val())) {
 					putObject.path = '';
 				}
 			} else {
-				url = OC.generateUrl('/apps/files_mindmap/ajax/savefile');
+				url = OC.generateUrl('/apps/files_mindmap2/ajax/savefile');
 			}
 
 
@@ -196,9 +196,9 @@ var FilesMindMap = {
 				try {
 					OCA.FilesMindMap._file.mtime = data.mtime;
 				} catch(e) {}
-				success(t('files_mindmap', 'File Saved'));
+				success(t('files_mindmap2', 'File Saved'));
 			}).fail(function(jqXHR){
-				var message = t('files_mindmap', 'Save failed');
+				var message = t('files_mindmap2', 'Save failed');
 				try{
 					message = JSON.parse(jqXHR.responseText).message;
 				}catch(e){}
@@ -216,20 +216,20 @@ var FilesMindMap = {
 		var mimetype = $('#mimetype').val();
 		if ($('#isPublic').val() && this.isSupportedMime(mimetype)) {
 			sharingToken = $('#sharingToken').val();
-			url = OC.generateUrl('/apps/files_mindmap/public/{token}', {token: sharingToken});
+			url = OC.generateUrl('/apps/files_mindmap2/public/{token}', {token: sharingToken});
 		} else if ($('#isPublic').val()) {
 			sharingToken = $('#sharingToken').val();
-			url = OC.generateUrl('/apps/files_mindmap/public/{token}?dir={dir}&filename={filename}',
+			url = OC.generateUrl('/apps/files_mindmap2/public/{token}?dir={dir}&filename={filename}',
                 { token: sharingToken, filename: filename, dir: dir});
 		} else {
-			url = OC.generateUrl('/apps/files_mindmap/ajax/loadfile?filename={filename}&dir={dir}',
+			url = OC.generateUrl('/apps/files_mindmap2/ajax/loadfile?filename={filename}&dir={dir}',
                 {filename: filename, dir: dir});
 		}
 		$.get(url).done(function(data) {
 			data.filecontents = FilesMindMap.Util.base64Decode(data.filecontents);
 			var plugin = self.getExtensionByMime(data.mime);
 			if (!plugin || plugin.decode === null) {
-				fail(t('files_mindmap', 'Unsupported file type: {mimetype}', {mimetype: data.mime}));
+				fail(t('files_mindmap2', 'Unsupported file type: {mimetype}', {mimetype: data.mime}));
 			}
 
 			plugin.decode(data.filecontents).then(function(kmdata){
@@ -264,7 +264,7 @@ var FilesMindMap = {
 		registerFileAction(new FileAction({
 			id: 'file_mindmap',
 			displayName() {
-				return t('files_mindmap', 'Edit')
+				return t('files_mindmap2', 'Edit')
 			},
 			iconSvgInline: () => SvgPencil,
 
@@ -656,7 +656,7 @@ function getUniqueName(name, names) {
 FilesMindMap.registerNewFileMenuPlugin = () => {
 	addNewFileMenuEntry({
 		id: 'mindmapfile',
-		displayName: t('files_mindmap', 'New mind map file'),
+		displayName: t('files_mindmap2', 'New mind map file'),
 		iconClass: 'icon-mindmap',
 		enabled() {
 			// only attach to main file list, public view is not supported yet
@@ -687,7 +687,7 @@ FilesMindMap.registerNewFileMenuPlugin = () => {
 				root: context?.root || '/files/' + getCurrentUser()?.uid,
 			})
 
-			FilesMindMap.showMessage(t('files_mindmap', 'Created "{name}"', { name: fileName }))
+			FilesMindMap.showMessage(t('files_mindmap2', 'Created "{name}"', { name: fileName }))
 
 			emit('files:node:created', file)
 

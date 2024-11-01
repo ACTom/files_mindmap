@@ -1,4 +1,4 @@
-app_name=files_mindmap
+app_name=files_mindmap2
 
 project_dir=$(CURDIR)/../$(app_name)
 build_dir=$(CURDIR)/build

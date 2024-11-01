@@ -1,10 +1,10 @@
 <?php
 
-namespace OCA\Files_MindMap\AppInfo;
+namespace OCA\Files_MindMap2\AppInfo;
 
 use OC\Files\Type\Detection;
 use OCA\Files\Event\LoadAdditionalScriptsEvent;
-use OCA\Files_MindMap\Listener\LoadAdditionalScripts;
+use OCA\Files_MindMap2\Listener\LoadAdditionalScripts;
 use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
@@ -16,7 +16,7 @@ use OCP\Security\CSP\AddContentSecurityPolicyEvent;
 
 
 class Application extends App implements IBootstrap {
-    const APPNAME = 'files_mindmap';
+    const APPNAME = 'files_mindmap2';
 
 	public function __construct(array $urlParams = array()) {
 		parent::__construct(self::APPNAME, $urlParams);
@@ -43,7 +43,7 @@ class Application extends App implements IBootstrap {
 		$container = $this->getContainer();
 		/** @var  IEventDispatcher $eventDispatcher */
 		$eventDispatcher = $container->get(IEventDispatcher::class);
-		$eventDispatcher->addListener('OCA\Files_Sharing::loadAdditionalScripts', array('OCA\Files_MindMap\Listener\LoadAdditionalScripts','additionalScripts'));
+		$eventDispatcher->addListener('OCA\Files_Sharing::loadAdditionalScripts', array('OCA\Files_MindMap2\Listener\LoadAdditionalScripts','additionalScripts'));
 	}
 
 	public function boot(IBootContext $context): void {

@@ -1,5 +1,5 @@
 OC.L10N.register(
-    "files_mindmap",
+    "files_mindmap2",
     {
         "New mind map file": "Nuova Mindmap",
         "New mind map.km": "Nuova Mindmap.km",

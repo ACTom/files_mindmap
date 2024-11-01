@@ -1,5 +1,5 @@
 <?php
-namespace OCA\Files_MindMap\Controller;
+namespace OCA\Files_MindMap2\Controller;
 
 
 use OC\HintException;
@@ -129,7 +129,7 @@ class FileHandlingController extends Controller{
 			
 				if($file->isUpdateable()) {
 					if ($mtime != $file->getMTime()) {
-						$this->logger->error("User cannot save shared mindmap (someone updated it in the meantime): {$mtime} vs. {$file->getMTime()} {$file->getPath()}", ['app' => 'files_mindmap']);
+						$this->logger->error("User cannot save shared mindmap (someone updated it in the meantime): {$mtime} vs. {$file->getMTime()} {$file->getPath()}", ['app' => 'files_mindmap2']);
 						return new DataResponse([ 'message' => $this->l->t('The file you are working on was updated in the meantime. You cannot save your progress as saving would overwrite these changes. Please reload the page.')],Http::STATUS_BAD_REQUEST);
 					}
 					try {

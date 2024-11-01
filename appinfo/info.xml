@@ -1,28 +1,28 @@
 <?xml version="1.0"?>
 <info xmlns:xsi= "http://www.w3.org/2001/XMLSchema-instance"
 	  xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
-	<id>files_mindmap</id>
-	<name>Mind Map</name>
+	<id>files_mindmap2</id>
+	<name>Mind Map 2</name>
 	<summary>A Mind map editor</summary>
 	<description><![CDATA[This application enables Nextcloud users to open, save and edit mind map files in the web browser. If enabled, an entry in the New button at the top of the web browser the Mindmap file entry appears. When clicked, a new mindmap file opens in the browser and the file can be saved into the current Nextcloud directory.]]></description>
 	<version>0.0.30</version>
 	<licence>agpl</licence>
 	<author mail="i@actom.me" homepage="https://actom.me">Jingtao Yan</author>
-	<namespace>Files_MindMap</namespace>
+	<namespace>Files_MindMap2</namespace>
 	<category>files</category>
 	<category>office</category>
-	<website>https://github.com/ACTom/files_mindmap</website>
-	<bugs>https://github.com/ACTom/files_mindmap/issues</bugs>
-	<repository type="git">https://github.com/ACTom/files_mindmap.git</repository>
-	<screenshot small-thumbnail="https://raw.githubusercontent.com/ACTom/files_mindmap/master/screenshots/1-small.png">https://raw.githubusercontent.com/ACTom/files_mindmap/master/screenshots/1.png</screenshot>
-	<screenshot small-thumbnail="https://raw.githubusercontent.com/ACTom/files_mindmap/master/screenshots/2-small.png">https://raw.githubusercontent.com/ACTom/files_mindmap/master/screenshots/2.png</screenshot>
-	<screenshot small-thumbnail="https://raw.githubusercontent.com/ACTom/files_mindmap/master/screenshots/3-small.png">https://raw.githubusercontent.com/ACTom/files_mindmap/master/screenshots/3.png</screenshot>
+	<website>https://github.com/onny/files_mindmap</website>
+	<bugs>https://github.com/onny/files_mindmap/issues</bugs>
+	<repository type="git">https://github.com/onny/files_mindmap.git</repository>
+	<screenshot small-thumbnail="https://raw.githubusercontent.com/onny/files_mindmap/master/screenshots/1-small.png">https://raw.githubusercontent.com/onny/files_mindmap/master/screenshots/1.png</screenshot>
+	<screenshot small-thumbnail="https://raw.githubusercontent.com/onny/files_mindmap/master/screenshots/2-small.png">https://raw.githubusercontent.com/onny/files_mindmap/master/screenshots/2.png</screenshot>
+	<screenshot small-thumbnail="https://raw.githubusercontent.com/onny/files_mindmap/master/screenshots/3-small.png">https://raw.githubusercontent.com/onny/files_mindmap/master/screenshots/3.png</screenshot>
 	<dependencies>
 		<nextcloud min-version="28" max-version="28"/>
 	</dependencies>
 	<repair-steps>
 		<install>
-			<step>OCA\Files_MindMap\Migration\InstallStep</step>
+			<step>OCA\Files_MindMap2\Migration\InstallStep</step>
 		</install>
 	</repair-steps>
 </info>

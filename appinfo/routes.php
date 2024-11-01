@@ -1,7 +1,7 @@
 <?php
 //declare(strict_types=1);
 //
-//namespace OCA\Files_MindMap\AppInfo;
+//namespace OCA\Files_MindMap2\AppInfo;
 
 return ['routes' => [
     ['name' => 'display#showMindmapViewer', 'url' => '/', 'verb' => 'GET'],

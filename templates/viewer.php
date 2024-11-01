@@ -2,7 +2,7 @@
   /** @var array $_ */
   /** @var OCP\IURLGenerator $urlGenerator */
   $urlGenerator = $_['urlGenerator'];
-  $version = \OC::$server->getAppManager()->getAppVersion('files_mindmap');
+  $version = \OC::$server->getAppManager()->getAppVersion('files_mindmap2');
   $lang = $_['lang'];
   if (method_exists(\OC::$server, 'getContentSecurityPolicyNonceManager')) {
       $nonce = \OC::$server->getContentSecurityPolicyNonceManager()->getNonce();
@@ -18,13 +18,13 @@
     <base target="_blank" />
 
 
-	<link rel="stylesheet" href="<?php p($urlGenerator->linkTo('files_mindmap', 'vendor/bootstrap/dist/css/bootstrap.css')) ?>?v=<?php p($version) ?>" />
-	<link rel="stylesheet" href="<?php p($urlGenerator->linkTo('files_mindmap', 'vendor/codemirror/lib/codemirror.css')) ?>?v=<?php p($version) ?>" />
-	<link rel="stylesheet" href="<?php p($urlGenerator->linkTo('files_mindmap', 'vendor/hotbox/hotbox.css')) ?>?v=<?php p($version) ?>" />
-	<link rel="stylesheet" href="<?php p($urlGenerator->linkTo('files_mindmap', 'vendor/kityminder-core/dist/kityminder.core.css')) ?>?v=<?php p($version) ?>" />
-	<link rel="stylesheet" href="<?php p($urlGenerator->linkTo('files_mindmap', 'vendor/color-picker/dist/color-picker.min.css')) ?>?v=<?php p($version) ?>" />
-	<link rel="stylesheet" href="<?php p($urlGenerator->linkTo('files_mindmap', 'vendor/kityminder-editor/kityminder.editor.min.css')) ?>?v=<?php p($version) ?>">
-	<link rel="stylesheet" href="<?php p($urlGenerator->linkTo('files_mindmap', 'css/style.css')) /* add custom css to iframe */ ?>" />
+	<link rel="stylesheet" href="<?php p($urlGenerator->linkTo('files_mindmap2', 'vendor/bootstrap/dist/css/bootstrap.css')) ?>?v=<?php p($version) ?>" />
+	<link rel="stylesheet" href="<?php p($urlGenerator->linkTo('files_mindmap2', 'vendor/codemirror/lib/codemirror.css')) ?>?v=<?php p($version) ?>" />
+	<link rel="stylesheet" href="<?php p($urlGenerator->linkTo('files_mindmap2', 'vendor/hotbox/hotbox.css')) ?>?v=<?php p($version) ?>" />
+	<link rel="stylesheet" href="<?php p($urlGenerator->linkTo('files_mindmap2', 'vendor/kityminder-core/dist/kityminder.core.css')) ?>?v=<?php p($version) ?>" />
+	<link rel="stylesheet" href="<?php p($urlGenerator->linkTo('files_mindmap2', 'vendor/color-picker/dist/color-picker.min.css')) ?>?v=<?php p($version) ?>" />
+	<link rel="stylesheet" href="<?php p($urlGenerator->linkTo('files_mindmap2', 'vendor/kityminder-editor/kityminder.editor.min.css')) ?>?v=<?php p($version) ?>">
+	<link rel="stylesheet" href="<?php p($urlGenerator->linkTo('files_mindmap2', 'css/style.css')) /* add custom css to iframe */ ?>" />
 
 
 	<style>
@@ -158,29 +158,29 @@
 <kityminder-editor id="viewer" lang="<?=$lang?>" on-init="initEditor(editor, minder)"></kityminder-editor>
 </body>
 
-<script nonce="<?=$nonce?>" src="<?php p($urlGenerator->linkTo('files_mindmap', 'vendor/jquery/dist/jquery.js')) ?>?v=<?php p($version) ?>"></script>
-<script nonce="<?=$nonce?>" src="<?php p($urlGenerator->linkTo('files_mindmap', 'vendor/bootstrap/dist/js/bootstrap.js')) ?>?v=<?php p($version) ?>"></script>
-<script nonce="<?=$nonce?>" src="<?php p($urlGenerator->linkTo('files_mindmap', 'vendor/angular/angular.js')) ?>?v=<?php p($version) ?>"></script>
-<script nonce="<?=$nonce?>" src="<?php p($urlGenerator->linkTo('files_mindmap', 'vendor/angular-bootstrap/ui-bootstrap-tpls.js')) ?>?v=<?php p($version) ?>"></script>
-<script nonce="<?=$nonce?>" src="<?php p($urlGenerator->linkTo('files_mindmap', 'vendor/codemirror/lib/codemirror.js')) ?>?v=<?php p($version) ?>"></script>
-<script nonce="<?=$nonce?>" src="<?php p($urlGenerator->linkTo('files_mindmap', 'vendor/codemirror/mode/xml/xml.js')) ?>?v=<?php p($version) ?>"></script>
-<script nonce="<?=$nonce?>" src="<?php p($urlGenerator->linkTo('files_mindmap', 'vendor/codemirror/mode/javascript/javascript.js')) ?>?v=<?php p($version) ?>"></script>
-<script nonce="<?=$nonce?>" src="<?php p($urlGenerator->linkTo('files_mindmap', 'vendor/codemirror/mode/css/css.js')) ?>?v=<?php p($version) ?>"></script>
-<script nonce="<?=$nonce?>" src="<?php p($urlGenerator->linkTo('files_mindmap', 'vendor/codemirror/mode/htmlmixed/htmlmixed.js')) ?>?v=<?php p($version) ?>"></script>
-<script nonce="<?=$nonce?>" src="<?php p($urlGenerator->linkTo('files_mindmap', 'vendor/codemirror/mode/markdown/markdown.js')) ?>?v=<?php p($version) ?>"></script>
-<script nonce="<?=$nonce?>" src="<?php p($urlGenerator->linkTo('files_mindmap', 'vendor/codemirror/addon/mode/overlay.js')) ?>?v=<?php p($version) ?>"></script>
-<script nonce="<?=$nonce?>" src="<?php p($urlGenerator->linkTo('files_mindmap', 'vendor/codemirror/mode/gfm/gfm.js')) ?>?v=<?php p($version) ?>"></script>
-<script nonce="<?=$nonce?>" src="<?php p($urlGenerator->linkTo('files_mindmap', 'vendor/angular-ui-codemirror/ui-codemirror.js')) ?>?v=<?php p($version) ?>"></script>
-<script nonce="<?=$nonce?>" src="<?php p($urlGenerator->linkTo('files_mindmap', 'vendor/marked/lib/marked.js')) ?>?v=<?php p($version) ?>"></script>
-<script nonce="<?=$nonce?>" src="<?php p($urlGenerator->linkTo('files_mindmap', 'vendor/kity/dist/kity.min.js')) ?>?v=<?php p($version) ?>"></script>
-<script nonce="<?=$nonce?>" src="<?php p($urlGenerator->linkTo('files_mindmap', 'vendor/hotbox/hotbox.js')) ?>?v=<?php p($version) ?>"></script>
-<script nonce="<?=$nonce?>" src="<?php p($urlGenerator->linkTo('files_mindmap', 'vendor/kityminder-core/dist/kityminder.core.min.js')) ?>?v=<?php p($version) ?>"></script>
-<script nonce="<?=$nonce?>" src="<?php p($urlGenerator->linkTo('files_mindmap', 'vendor/color-picker/dist/color-picker.min.js')) ?>?v=<?php p($version) ?>"></script>
-<script nonce="<?=$nonce?>" src="<?php p($urlGenerator->linkTo('files_mindmap', 'vendor/js-base64/base64.min.js')) ?>?v=<?php p($version) ?>"></script>
+<script nonce="<?=$nonce?>" src="<?php p($urlGenerator->linkTo('files_mindmap2', 'vendor/jquery/dist/jquery.js')) ?>?v=<?php p($version) ?>"></script>
+<script nonce="<?=$nonce?>" src="<?php p($urlGenerator->linkTo('files_mindmap2', 'vendor/bootstrap/dist/js/bootstrap.js')) ?>?v=<?php p($version) ?>"></script>
+<script nonce="<?=$nonce?>" src="<?php p($urlGenerator->linkTo('files_mindmap2', 'vendor/angular/angular.js')) ?>?v=<?php p($version) ?>"></script>
+<script nonce="<?=$nonce?>" src="<?php p($urlGenerator->linkTo('files_mindmap2', 'vendor/angular-bootstrap/ui-bootstrap-tpls.js')) ?>?v=<?php p($version) ?>"></script>
+<script nonce="<?=$nonce?>" src="<?php p($urlGenerator->linkTo('files_mindmap2', 'vendor/codemirror/lib/codemirror.js')) ?>?v=<?php p($version) ?>"></script>
+<script nonce="<?=$nonce?>" src="<?php p($urlGenerator->linkTo('files_mindmap2', 'vendor/codemirror/mode/xml/xml.js')) ?>?v=<?php p($version) ?>"></script>
+<script nonce="<?=$nonce?>" src="<?php p($urlGenerator->linkTo('files_mindmap2', 'vendor/codemirror/mode/javascript/javascript.js')) ?>?v=<?php p($version) ?>"></script>
+<script nonce="<?=$nonce?>" src="<?php p($urlGenerator->linkTo('files_mindmap2', 'vendor/codemirror/mode/css/css.js')) ?>?v=<?php p($version) ?>"></script>
+<script nonce="<?=$nonce?>" src="<?php p($urlGenerator->linkTo('files_mindmap2', 'vendor/codemirror/mode/htmlmixed/htmlmixed.js')) ?>?v=<?php p($version) ?>"></script>
+<script nonce="<?=$nonce?>" src="<?php p($urlGenerator->linkTo('files_mindmap2', 'vendor/codemirror/mode/markdown/markdown.js')) ?>?v=<?php p($version) ?>"></script>
+<script nonce="<?=$nonce?>" src="<?php p($urlGenerator->linkTo('files_mindmap2', 'vendor/codemirror/addon/mode/overlay.js')) ?>?v=<?php p($version) ?>"></script>
+<script nonce="<?=$nonce?>" src="<?php p($urlGenerator->linkTo('files_mindmap2', 'vendor/codemirror/mode/gfm/gfm.js')) ?>?v=<?php p($version) ?>"></script>
+<script nonce="<?=$nonce?>" src="<?php p($urlGenerator->linkTo('files_mindmap2', 'vendor/angular-ui-codemirror/ui-codemirror.js')) ?>?v=<?php p($version) ?>"></script>
+<script nonce="<?=$nonce?>" src="<?php p($urlGenerator->linkTo('files_mindmap2', 'vendor/marked/lib/marked.js')) ?>?v=<?php p($version) ?>"></script>
+<script nonce="<?=$nonce?>" src="<?php p($urlGenerator->linkTo('files_mindmap2', 'vendor/kity/dist/kity.min.js')) ?>?v=<?php p($version) ?>"></script>
+<script nonce="<?=$nonce?>" src="<?php p($urlGenerator->linkTo('files_mindmap2', 'vendor/hotbox/hotbox.js')) ?>?v=<?php p($version) ?>"></script>
+<script nonce="<?=$nonce?>" src="<?php p($urlGenerator->linkTo('files_mindmap2', 'vendor/kityminder-core/dist/kityminder.core.min.js')) ?>?v=<?php p($version) ?>"></script>
+<script nonce="<?=$nonce?>" src="<?php p($urlGenerator->linkTo('files_mindmap2', 'vendor/color-picker/dist/color-picker.min.js')) ?>?v=<?php p($version) ?>"></script>
+<script nonce="<?=$nonce?>" src="<?php p($urlGenerator->linkTo('files_mindmap2', 'vendor/js-base64/base64.min.js')) ?>?v=<?php p($version) ?>"></script>
 
-<script nonce="<?=$nonce?>" src="<?php p($urlGenerator->linkTo('files_mindmap', 'vendor/kityminder-editor/kityminder.editor.min.js')) ?>?v=<?php p($version) ?>"></script>
+<script nonce="<?=$nonce?>" src="<?php p($urlGenerator->linkTo('files_mindmap2', 'vendor/kityminder-editor/kityminder.editor.min.js')) ?>?v=<?php p($version) ?>"></script>
 
-<script nonce="<?=$nonce?>" src="<?php p($urlGenerator->linkTo('files_mindmap', 'js/viewer.js')) ?>?v=<?php p($version) ?>"></script>
-<script nonce="<?=$nonce?>" src="<?php p($urlGenerator->linkTo('files_mindmap', 'vendor/jsPDF/dist/jspdf.min.js')) ?>?v=<?php p($version) ?>"></script>
+<script nonce="<?=$nonce?>" src="<?php p($urlGenerator->linkTo('files_mindmap2', 'js/viewer.js')) ?>?v=<?php p($version) ?>"></script>
+<script nonce="<?=$nonce?>" src="<?php p($urlGenerator->linkTo('files_mindmap2', 'vendor/jsPDF/dist/jspdf.min.js')) ?>?v=<?php p($version) ?>"></script>
 </html>
 

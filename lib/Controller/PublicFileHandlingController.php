@@ -20,7 +20,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-namespace OCA\Files_MindMap\Controller;
+namespace OCA\Files_MindMap2\Controller;
 
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
@@ -200,7 +200,7 @@ class PublicFileHandlingController extends Controller{
 
         if($file->isUpdateable()) {
             if ($mtime != $file->getMTime()) {
-                $this->logger->error("Anonymous cannot save shared mindmap (someone updated it in the meantime): {$mtime} vs. {$file->getMTime()} {$file->getPath()}", ['app' => 'files_mindmap']);
+                $this->logger->error("Anonymous cannot save shared mindmap (someone updated it in the meantime): {$mtime} vs. {$file->getMTime()} {$file->getPath()}", ['app' => 'files_mindmap2']);
                 return new DataResponse([ 'message' => $this->l->t('The file you are working on was updated in the meantime. You cannot save your progress as saving would overwrite these changes. Please reload the page.')],Http::STATUS_BAD_REQUEST);
             }
             try {
@@ -221,7 +221,7 @@ class PublicFileHandlingController extends Controller{
             return new DataResponse(['mtime' => $newmtime, 'size' => $newsize], Http::STATUS_OK);
         } else {
             // Not writeable!
-            $this->logger->error('User does not have permission to write to share file: ' . $file->getPath(), ['app' => 'files_mindmap']);
+            $this->logger->error('User does not have permission to write to share file: ' . $file->getPath(), ['app' => 'files_mindmap2']);
             return new DataResponse([ 'message' => $this->l->t('Insufficient permissions')],Http::STATUS_BAD_REQUEST);
         }
     }

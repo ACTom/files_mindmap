@@ -24,11 +24,11 @@ translate: Go to [https://github.com/ACTom/kityminder-editor](https://github.com
 你也可以直接点击一个.km文件来编辑。
 
 ## 应用截图
-![截图1](https://raw.githubusercontent.com/ACTom/files_mindmap/master/screenshots/1.png)
+![截图1](https://raw.githubusercontent.com/onny/files_mindmap/master/screenshots/1.png)
 
-![截图2](https://raw.githubusercontent.com/ACTom/files_mindmap/master/screenshots/2.png)
+![截图2](https://raw.githubusercontent.com/onny/files_mindmap/master/screenshots/2.png)
 
-![截图3](https://raw.githubusercontent.com/ACTom/files_mindmap/master/screenshots/3.png)
+![截图3](https://raw.githubusercontent.com/onny/files_mindmap/master/screenshots/3.png)
 
 ## 计划
 * 本地图片上传并编码至km文件（已完成）

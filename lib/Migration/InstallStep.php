@@ -1,5 +1,5 @@
 <?php
-namespace OCA\Files_MindMap\Migration;
+namespace OCA\Files_MindMap2\Migration;
 
 require \OC::$SERVERROOT . "/3rdparty/autoload.php";
 
@@ -36,7 +36,7 @@ class InstallStep implements IRepairStep {
 
         if (version_compare($currentVersion, '21.0.0.11', '<')) {
             /* Since 21.0.0 beta4, NC has mindmap's mimetype icon */
-            $this->logger->info("Copy mindmap icon to core/img directory.", ["app" => "files_mindmap"]);
+            $this->logger->info("Copy mindmap icon to core/img directory.", ["app" => "files_mindmap2"]);
             $appImagePath = __DIR__ . '/../../img/mindmap.svg';
             $coreImagePath = \OC::$SERVERROOT . '/core/img/filetypes/mindmap.svg';
             if (!file_exists($coreImagePath) || md5_file($coreImagePath) !== md5_file($appImagePath)) {

@@ -1,6 +1,6 @@
 //I try dont use polish diacritical mark in .js file
 OC.L10N.register(
-    "files_mindmap", 
+    "files_mindmap2", 
     {
         "New mind map file": "Nowa mapa_mysli",
         "New mind map.km": "Nowa mapa_mysli.km",
