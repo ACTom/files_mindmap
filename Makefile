@@ -19,6 +19,7 @@ create-tag:
 
 clean:
 	rm -rf $(build_dir)
+	rm css/vendor/*
 
 build-front:
 	npm ci
