@@ -1,6 +1,5 @@
 import { join } from 'path'
 import { viteStaticCopy } from 'vite-plugin-static-copy'
-
 import { createAppConfig } from '@nextcloud/vite-config'
 
 // replaced by vite
@@ -8,6 +7,7 @@ declare const __dirname: string
 
 export default createAppConfig({
 	mindmap: join(__dirname, 'src', 'mindmap.js'),
+	mindmapviewer: join(__dirname, 'src', 'mindmapviewer.js'),
 }, {
 	inlineCSS: { relativeCSSInjection: true },
 	config: {
@@ -28,6 +28,9 @@ export default createAppConfig({
 					}
 				]
 			})
-		]
+		],
+		resolve: {
+			dedupe: ['vue'],
+		}
 	},
 })

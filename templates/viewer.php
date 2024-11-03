@@ -1,14 +1,15 @@
 <?php
-  /** @var array $_ */
-  /** @var OCP\IURLGenerator $urlGenerator */
-  $urlGenerator = $_['urlGenerator'];
-  $version = \OC::$server->getAppManager()->getAppVersion('files_mindmap');
-  $lang = $_['lang'];
-  if (method_exists(\OC::$server, 'getContentSecurityPolicyNonceManager')) {
-      $nonce = \OC::$server->getContentSecurityPolicyNonceManager()->getNonce();
-  } else {
-      $nonce = '';
-  }
+    /** @var array $_ */
+    use OCP\App\IAppManager;
+    use OCP\IURLGenerator;
+    $urlGenerator = \OC::$server->get(IURLGenerator::class);
+    $version = \OC::$server[IAppManager::class]->getAppVersion('files_mindmap');
+    $lang = $_['lang'];
+    if (method_exists(\OC::$server, 'getContentSecurityPolicyNonceManager')) {
+        $nonce = \OC::$server->getContentSecurityPolicyNonceManager()->getNonce();
+    } else {
+        $nonce = '';
+    }
 ?>
 <!DOCTYPE html>
 <html>

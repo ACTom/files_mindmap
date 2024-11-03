@@ -1,4 +1,3 @@
-import JSZip from 'jszip'
 import { basename, extname } from 'path'
 import SvgPencil from '@mdi/svg/svg/pencil.svg?raw'
 
@@ -11,12 +10,17 @@ import {
 	davResultToNode,
 	File,
 	Permission,
-	davGetDefaultPropfind,
-	getNavigation,
+	davGetDefaultPropfind
 } from '@nextcloud/files'
 import { emit } from '@nextcloud/event-bus'
 import axios from '@nextcloud/axios'
 import { getCurrentUser } from '@nextcloud/auth'
+
+
+import util from './util'
+import km from './plugins/km'
+import freemind from './plugins/freemind'
+import xmind from './plugins/xmind'
 
 var FilesMindMap = {
 	_currentContext: null,
@@ -24,7 +28,7 @@ var FilesMindMap = {
 	_lastTitle: '',
 	_extensions: [],
 	init: function() {
-		this.registerExtension([FilesMindMap.Extensions.KM, FilesMindMap.Extensions.FreeMind, FilesMindMap.Extensions.XMind]);
+		this.registerExtension([km, freemind, xmind]);
 	},
 
 	registerExtension: function(objs) {
@@ -226,7 +230,7 @@ var FilesMindMap = {
                 {filename: filename, dir: dir});
 		}
 		$.get(url).done(function(data) {
-			data.filecontents = FilesMindMap.Util.base64Decode(data.filecontents);
+			data.filecontents = util.base64Decode(data.filecontents);
 			var plugin = self.getExtensionByMime(data.mime);
 			if (!plugin || plugin.decode === null) {
 				fail(t('files_mindmap', 'Unsupported file type: {mimetype}', {mimetype: data.mime}));
@@ -274,7 +278,8 @@ var FilesMindMap = {
 
 			async exec(node, view) {
 				try {
-					_self._onEditorTrigger(node.basename, { dir: node.dirname, root: node.root })
+					OCA.Viewer.openWith('mindmap', { path: node.path })
+					//_self._onEditorTrigger(node.basename, { dir: node.dirname, root: node.root })
 					return true
 				} catch (error) {
 					_self.showMessage(error)
@@ -284,6 +289,55 @@ var FilesMindMap = {
 
 			default: DefaultType.HIDDEN,
 		}))
+	},
+
+	registerNewFileMenuPlugin: function() {
+		addNewFileMenuEntry({
+			id: 'mindmapfile',
+			displayName: t('files_mindmap', 'New mind map file'),
+			iconClass: 'icon-mindmap',
+			enabled(context) {
+				// only attach to main file list, public view is not supported yet
+				return (context.permissions & Permission.CREATE) !== 0;
+			},
+			async handler(context, content) {
+				const contentNames = content.map((node) => node.basename)
+				const fileName = getUniqueName(t('files', "New mindmap.km"), contentNames)
+				const source = context.encodedSource + '/' + encodeURIComponent(fileName)
+	
+				const response = await axios({
+					method: 'PUT',
+					url: source,
+					headers: {
+						Overwrite: 'F',
+					},
+					data: ' ',
+				})
+	
+				const fileid = parseInt(response.headers['oc-fileid'])
+				const file = new File({
+					source: context.source + '/' + fileName,
+					id: fileid,
+					mtime: new Date(),
+					mime: 'application/km',
+					owner: getCurrentUser()?.uid || null,
+					permissions: Permission.ALL,
+					root: context?.root || '/files/' + getCurrentUser()?.uid,
+				})
+	
+				FilesMindMap.showMessage(t('files_mindmap', 'Created "{name}"', { name: fileName }))
+	
+				emit('files:node:created', file)
+	
+				FilesMindMap._onEditorTrigger(
+					fileName,
+					{
+						dir: context.path,
+						root: context.root,
+					}
+				)
+			},
+		});
 	},
 
 	hackFileIcon: function() {
@@ -330,316 +384,9 @@ var FilesMindMap = {
 		this._extensions.forEach(function(obj){
 			result = result.concat(obj.mimes);
 		});
+		console.debug('Mindmap Mimetypes:', result);
 		return result;
 	},
-};
-
-FilesMindMap.Extensions = {};
-
-FilesMindMap.Extensions.KM = {
-	name: 'km',
-	mimes: ['application/km'],
-	encode: function(data) {
-        return new Promise(function(resolve, reject) {
-			resolve(data);
-        });
-	},
-	decode: function(data) {
-		return new Promise(function(resolve, reject) {
-			try {
-				resolve(JSON.parse(data));
-			} catch (e) {
-				resolve(data);
-			}
-        });
-	}
-};
-
-FilesMindMap.Extensions.FreeMind = {
-	name: 'freemind',
-	mimes: ['application/x-freemind'],
-	encode: null,
-	decode: function(data) {
-		var self = this;
-        return new Promise(function(resolve, reject) {
-            try {
-                var result = self.toKm(data);
-                resolve(result);
-            } catch (e) {
-                reject(e);
-            }
-        });
-	},
-    markerMap: {
-        'full-1': ['priority', 1],
-        'full-2': ['priority', 2],
-        'full-3': ['priority', 3],
-        'full-4': ['priority', 4],
-        'full-5': ['priority', 5],
-        'full-6': ['priority', 6],
-        'full-7': ['priority', 7],
-        'full-8': ['priority', 8]
-    },
-    processTopic: function (topic, obj) {
-        //处理文本
-        obj.data = {
-            text: topic.TEXT
-        };
-        var i;
-
-        // 处理标签
-        if (topic.icon) {
-            var icons = topic.icon;
-            var type;
-            if (icons.length && icons.length > 0) {
-                for (i in icons) {
-                    type = this.markerMap[icons[i].BUILTIN];
-                    if (type) obj.data[type[0]] = type[1];
-                }
-            } else {
-                type = this.markerMap[icons.BUILTIN];
-                if (type) obj.data[type[0]] = type[1];
-            }
-        }
-
-        // 处理超链接
-        if (topic.LINK) {
-            obj.data.hyperlink = topic.LINK;
-        }
-
-        //处理子节点
-        if (topic.node) {
-            var tmp = topic.node;
-            if (tmp.length && tmp.length > 0) { //多个子节点
-                obj.children = [];
-
-                for (i in tmp) {
-                    obj.children.push({});
-                    this.processTopic(tmp[i], obj.children[i]);
-                }
-
-            } else { //一个子节点
-                obj.children = [{}];
-                this.processTopic(tmp, obj.children[0]);
-            }
-        }
-    },
-    toKm: function (xml) {
-        var json = FilesMindMap.Util.xml2json(xml);
-        var result = {};
-        this.processTopic(json.node, result);
-        return result;
-    }
-
-};
-
-FilesMindMap.Extensions.XMind = {
-	name: 'xmind',
-	mimes: ['application/vnd.xmind.workbook'],
-	encode: null,
-	decode: function(data) {
-		return this.readDocument(data);
-	},
-	markerMap : {
-        'priority-1': ['priority', 1],
-        'priority-2': ['priority', 2],
-        'priority-3': ['priority', 3],
-        'priority-4': ['priority', 4],
-        'priority-5': ['priority', 5],
-        'priority-6': ['priority', 6],
-        'priority-7': ['priority', 7],
-        'priority-8': ['priority', 8],
-
-        'task-start': ['progress', 1],
-        'task-oct': ['progress', 2],
-        'task-quarter': ['progress', 3],
-        'task-3oct': ['progress', 4],
-        'task-half': ['progress', 5],
-        'task-5oct': ['progress', 6],
-        'task-3quar': ['progress', 7],
-        'task-7oct': ['progress', 8],
-        'task-done': ['progress', 9]
-    },
-    processTopic: function (topic, obj) {
-
-        //处理文本
-        obj.data = {
-            text: topic.title
-        };
-
-        // 处理标签
-        if (topic.marker_refs && topic.marker_refs.marker_ref) {
-            var markers = topic.marker_refs.marker_ref;
-            var type;
-            if (markers.length && markers.length > 0) {
-                for (var i in markers) {
-                    type = this.markerMap[markers[i].marker_id];
-                    if (type) obj.data[type[0]] = type[1];
-                }
-            } else {
-                type = this.markerMap[markers.marker_id];
-                if (type) obj.data[type[0]] = type[1];
-            }
-        }
-
-        // 处理超链接
-        if (topic['xlink:href']) {
-            obj.data.hyperlink = topic['xlink:href'];
-        }
-        //处理子节点
-        var topics = topic.children && topic.children.topics;
-        var subTopics = topics && (topics.topic || topics[0] && topics[0].topic);
-        if (subTopics) {
-            var tmp = subTopics;
-            if (tmp.length && tmp.length > 0) { //多个子节点
-                obj.children = [];
-
-                for (var ii in tmp) {
-                    obj.children.push({});
-                    this.processTopic(tmp[ii], obj.children[ii]);
-                }
-
-            } else { //一个子节点
-                obj.children = [{}];
-                this.processTopic(tmp, obj.children[0]);
-            }
-        }
-    },
-    toKm: function (xml) {
-        var json = FilesMindMap.Util.xml2json(xml);
-        var result = {};
-        var sheet = json.sheet;
-        var topic = Array.isArray(sheet) ? sheet[0].topic : sheet.topic;
-        this.processTopic(topic, result);
-        return result;
-    },
-    readDocument: function (file) {
-        var self = this;
-        return new Promise(function(resolve, reject) {
-            JSZip.loadAsync(file).then(function(zip){
-                var contentFile = zip.file('content.xml');
-                if (contentFile != null) {
-                    contentFile.async('text').then(function(text){
-                        try {
-                            var json = self.toKm(text);
-                            resolve(json);
-                        } catch (e) {
-                            reject(e);
-                        }
-                    });
-                } else {
-                    reject(new Error('Content document missing'));
-                }
-            }, function(e) {
-                reject(e);
-            });
-        });
-    }
-};
-
-FilesMindMap.Util = {
-	base64Encode: function(string) {
-		return btoa(encodeURIComponent(string).replace(/%([0-9A-F]{2})/g, function(match, p1) {
-			return String.fromCharCode(parseInt(p1, 16))
-		}))
-	},
-	base64Decode: function(base64) {
-		try {
-			return decodeURIComponent(Array.prototype.map.call(atob(base64), function(c) {
-				return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
-			}).join(''));
-		} catch (e) {
-			var binary = atob(base64);
-			var array = new Uint8Array(binary.length);
-			for	(var i = 0; i < binary.length; i++) {
-				array[i] = binary.charCodeAt(i);
-			}
-			return new Blob([array]);
-		}
-	},
-    jsVar: function (s) {
-        return String(s || '').replace(/-/g,"_");
-    },
-    toArray: function (obj){
-        if (!Array.isArray(obj)) {
-            return [obj];
-        }
-        return obj;
-    },
-    parseNode: function (node) {
-        if (!node) return null;
-        var self = this;
-        var txt = '', obj = null, att = null;
-
-        if (node.childNodes) {
-            if (node.childNodes.length > 0) {
-                node.childNodes.forEach(function(cn) {
-                    var cnt = cn.nodeType, cnn = self.jsVar(cn.localName || cn.nodeName);
-                    var cnv = cn.text || cn.nodeValue || '';
-
-                    /* comment */
-                    if (cnt == 8) {
-                        return; // ignore comment node
-                    }
-                    /* white-space */
-                    else if (cnt == 3 || cnt == 4 || !cnn) {
-                        if (cnv.match(/^\s+$/)) {
-                            return;
-                        }
-                        txt += cnv.replace(/^\s+/, '').replace(/\s+$/, '');
-                    } else {
-                        obj = obj || {};
-                        if (obj[cnn]) {
-                            if (!obj[cnn].length) {
-                                obj[cnn] = self.toArray(obj[cnn]);
-                            }
-                            obj[cnn] = self.toArray(obj[cnn]);
-
-                            obj[cnn].push(self.parseNode(cn, true));
-                        } else {
-                            obj[cnn] = self.parseNode(cn);
-                        }
-                    }
-                });
-            }
-        }
-        if (node.attributes && node.tagName !='title') {
-            if (node.attributes.length > 0) {
-                att = {}; obj = obj || {};
-                node.attributes.forEach = [].forEach.bind(node.attributes);
-                node.attributes.forEach(function (at) {
-                    var atn = self.jsVar(at.name), atv = at.value;
-                    att[atn] = atv;
-                    if (obj[atn]) {
-                        obj[cnn] = this.toArray(obj[cnn]);
-                        obj[atn][obj[atn].length] = atv;
-                    }
-                    else {
-                        obj[atn] = atv;
-                    }
-                });
-            }
-        }
-        if (obj) {
-            obj = Object.assign({}, (txt != '' ? new String(txt) : {}), obj || {});
-            txt = (obj.text) ? ([obj.text || '']).concat([txt]) : txt;
-            if (txt) obj.text = txt;
-            txt = '';
-        }
-        var out = obj || txt;
-        return out;
-    },
-    parseXML: function (xml) {
-        var root = (xml.nodeType == 9) ? xml.documentElement : xml;
-        return this.parseNode(root, true);
-    },
-    xml2json: function (str) {
-        var domParser = new DOMParser();
-        var dom = domParser.parseFromString(str, 'application/xml');
-
-        var json = this.parseXML(dom);
-        return json;
-    },
 };
 
 // TODO: move to @nextcloud/files
@@ -653,71 +400,37 @@ function getUniqueName(name, names) {
 	return newName
 }
 
-FilesMindMap.registerNewFileMenuPlugin = () => {
-	addNewFileMenuEntry({
-		id: 'mindmapfile',
-		displayName: t('files_mindmap', 'New mind map file'),
-		iconClass: 'icon-mindmap',
-		enabled() {
-			// only attach to main file list, public view is not supported yet
-			return getNavigation()?.active?.id === 'files'
-		},
-		async handler(context, content) {
-			const contentNames = content.map((node) => node.basename)
-			const fileName = getUniqueName(t('files', "New mindmap.km"), contentNames)
-			const source = context.encodedSource + '/' + encodeURIComponent(fileName)
-
-			const response = await axios({
-				method: 'PUT',
-				url: source,
-				headers: {
-					Overwrite: 'F',
-				},
-				data: ' ',
-			})
-
-			const fileid = parseInt(response.headers['oc-fileid'])
-			const file = new File({
-				source: context.source + '/' + fileName,
-				id: fileid,
-				mtime: new Date(),
-				mime: 'application/km',
-				owner: getCurrentUser()?.uid || null,
-				permissions: Permission.ALL,
-				root: context?.root || '/files/' + getCurrentUser()?.uid,
-			})
-
-			FilesMindMap.showMessage(t('files_mindmap', 'Created "{name}"', { name: fileName }))
-
-			emit('files:node:created', file)
-
-			FilesMindMap._onEditorTrigger(
-				fileName,
-				{
-					dir: context.path,
-					root: context.root,
-				}
-			)
-		},
-	})
-};
-
 OCA.FilesMindMap = FilesMindMap;
+
+
+console.debug('files_mindmaps start.');
 
 // register mime types
 FilesMindMap.init();
 
-// do the "hacking" DOM jobs
-window.addEventListener('DOMContentLoaded', function () {
-	// Declare the plugin and its attachments
-	OCA.FilesMindMap.registerNewFileMenuPlugin()
-	OCA.FilesMindMap.registerFileActions();
-	OCA.FilesMindMap.hackFileIcon();
+console.debug('files_mindmaps registerNewFileMenuPlugin.');
+// Declare the plugin and its attachments
+OCA.FilesMindMap.registerNewFileMenuPlugin();
+console.debug('files_mindmaps registerFileActions.');
+OCA.FilesMindMap.registerFileActions();
 
-	if ($('#isPublic').val() && OCA.FilesMindMap.isSupportedMime($('#mimetype').val())) {
-		var sharingToken = $('#sharingToken').val();
-		var downloadUrl = OC.generateUrl('/s/{token}/download', {token: sharingToken});
-		var viewer = OCA.FilesMindMap;
-		viewer.show(downloadUrl, false);
-	}
-});
+// if (OCA.Viewer) {
+// 	console.debug('Mindmap registerHandler start');
+// 	OCA.Viewer.registerHandler({
+// 		id: 'mindmap',
+// 		group: null,
+// 		mimes: OCA.FilesMindMap.getSupportedMimetypes(),
+// 		component: MindMap,
+// 		theme: 'default',
+// 		canCompare: true,
+// 	});
+// 	console.debug('Mindmap registerHandler end');
+// }
+
+if ($('#isPublic').val() && OCA.FilesMindMap.isSupportedMime($('#mimetype').val())) {
+	var sharingToken = $('#sharingToken').val();
+	var downloadUrl = OC.generateUrl('/s/{token}/download', {token: sharingToken});
+	var viewer = OCA.FilesMindMap;
+	viewer.show(downloadUrl, false);
+}
+console.log('files_mindmaps loaded.');
