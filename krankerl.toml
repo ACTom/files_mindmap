@@ -1,0 +1,5 @@
+[package]
+before_cmds = [
+    "npm install",
+    "npm run build",
+]

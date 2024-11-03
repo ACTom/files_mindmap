@@ -1,0 +1,11 @@
+node_modules
+.git
+Makefile
+package.json
+package-lock.json
+vite.config.ts
+.gitignore
+.nextcloudignore
+.github
+krankerl.toml
+postinstall.sh
