@@ -15,6 +15,7 @@ import {
 import { emit } from '@nextcloud/event-bus'
 import axios from '@nextcloud/axios'
 import { getCurrentUser } from '@nextcloud/auth'
+import { dirname } from '@nextcloud/paths'
 
 
 import util from './util'
@@ -67,96 +68,6 @@ var FilesMindMap = {
 
 	hideMessage: function(id, t) {
 		OC.Notification.hide(id, t);
-	},
-
-	hide: async function() {
-		$('#mmframe').remove();
-		if ($('#isPublic').val() && $('#filesApp').val()){
-			$('#controls').removeClass('hidden');
-			$('#content').removeClass('full-height');
-			$('footer').removeClass('hidden');
-		}
-
-		// replace the controls with our own
-		$('#app-content #controls').removeClass('hidden');
-
-		document.title = this._lastTitle;
-
-		if (!$('#mimetype').val()) {
-			const client = davGetClient()
-			const response = await client.stat(this._file.root + '/' + this._file.name, { details: true, data: davGetDefaultPropfind() })
-			emit('files:node:updated', davResultToNode(response.data))
-		} else {
-			//TODO
-		}
-	},
-
-	/**
-	 * @param downloadUrl
-	 * @param isFileList
-	 */
-	show: function() {
-		var self = this;
-		var $iframe;
-		var shown = true;
-		var viewer = OC.generateUrl('/apps/files_mindmap/');
-		$iframe = $('<iframe id="mmframe" style="width:100%;height:100%;display:block;position:absolute;top:0;' +
-            'z-index:1041;" src="'+viewer+'" allowfullscreen="true"/>');
-
-		if ($('#isPublic').val()) {
-			// force the preview to adjust its height
-			$('#preview').append($iframe).css({height: '100%'});
-			$('body').css({height: '100%'});
-			$('#content').addClass('full-height');
-			$('footer').addClass('hidden');
-			$('#imgframe').addClass('hidden');
-			$('.directLink').addClass('hidden');
-			$('.directDownload').addClass('hidden');
-			$('#controls').addClass('hidden');
-		} else {
-			$('#app-content-vue').after($iframe);
-		}
-
-		$("#pageWidthOption").attr("selected","selected");
-		// replace the controls with our own
-		$('#app-content #controls').addClass('hidden');
-
-		$('#mmframe').load(function(){
-			var iframe = $('#mmframe').contents();
-
-			OC.Apps.hideAppSidebar();
-
-			iframe.save = function() {
-				window.alert('save');
-			};
-
-			self._lastTitle = document.title;
-
-			var filename = self._file.name ? self._file.name : $('#filename').val();
-			document.title = filename + ' - ' + OC.theme.title;
-
-			// iframe.find('#close-button').click(function() {
-			// 	self.hide();
-			// });
-
-			// Go back on ESC
-			$(document).keyup(function(e) {
-				if (shown && e.keyCode === 27) {
-					shown = false;
-					self.hide();
-				}
-			});
-		});
-
-		if(!$('html').hasClass('ie8')) {
-			history.pushState({}, '', '#mindmap');
-		}
-
-		if(!$('html').hasClass('ie8')) {
-			$(window).one('popstate', function () {
-				self.hide();
-			});
-		}
 	},
 
 	save: function(data, success, fail) {
@@ -278,8 +189,7 @@ var FilesMindMap = {
 
 			async exec(node, view) {
 				try {
-					OCA.Viewer.openWith('mindmap', { path: node.path })
-					//_self._onEditorTrigger(node.basename, { dir: node.dirname, root: node.root })
+					OCA.Viewer.openWith('mindmap', { path: node.path });
 					return true
 				} catch (error) {
 					_self.showMessage(error)
@@ -298,6 +208,7 @@ var FilesMindMap = {
 			iconClass: 'icon-mindmap',
 			enabled(context) {
 				// only attach to main file list, public view is not supported yet
+				console.log('addNewFileMenuEntry', context);
 				return (context.permissions & Permission.CREATE) !== 0;
 			},
 			async handler(context, content) {
@@ -329,54 +240,23 @@ var FilesMindMap = {
 	
 				emit('files:node:created', file)
 	
-				FilesMindMap._onEditorTrigger(
-					fileName,
-					{
-						dir: context.path,
-						root: context.root,
-					}
-				)
+				OCA.Viewer.openWith('mindmap', { path: context.path });
 			},
 		});
 	},
 
-	hackFileIcon: function() {
-		var changeMindmapIcons = function() {
-			$("#filestable")
-			.find("tr[data-type=file]")
-			.each(function () {
-				if (($(this).attr("data-mime") == "application/km" || $(this).attr("data-mime") == "application/x-freemind")
-					&& ($(this).find("div.thumbnail").length > 0)) {
-						if ($(this).find("div.thumbnail").hasClass("icon-mindmap") == false) {
-							$(this).find("div.thumbnail").addClass("icon icon-mindmap");
-						}
-					}
-			});
+	setFile: function(file) {
+		let filename = file.filename + '';
+		let basename = file.basename + '';
+		
+		this._file.name = basename;
+		this._file.root = '/files/' + getCurrentUser()?.uid;
+		this._file.dir = dirname(filename);
+		this._file.fullName = filename;
+		this._currentContext = {
+			dir: this._file.dir,
+			root: this._file.root
 		}
-
-		if ($('#filesApp').val()) {
-			$('#app-content-files')
-			.add('#app-content-extstoragemounts')
-			.on('changeDirectory', function (e) {
-				changeMindmapIcons();
-			})
-			.on('fileActionsReady', function (e) {
-				changeMindmapIcons();
-			});
-        }
-	},
-
-	_onEditorTrigger: function(fileName, context) {
-		this._currentContext = context;
-		this._file.name = fileName;
-		this._file.root = context.root;
-		this._file.dir = context.dir;
-		var fullName = context.dir + '/' + fileName;
-		if (context.dir === '/') {
-			fullName = '/' + fileName;
-		}
-		this._file.fullName = fullName;
-		this.show();
 	},
 
 	getSupportedMimetypes: function() {
@@ -414,23 +294,11 @@ OCA.FilesMindMap.registerNewFileMenuPlugin();
 console.debug('files_mindmaps registerFileActions.');
 OCA.FilesMindMap.registerFileActions();
 
-// if (OCA.Viewer) {
-// 	console.debug('Mindmap registerHandler start');
-// 	OCA.Viewer.registerHandler({
-// 		id: 'mindmap',
-// 		group: null,
-// 		mimes: OCA.FilesMindMap.getSupportedMimetypes(),
-// 		component: MindMap,
-// 		theme: 'default',
-// 		canCompare: true,
-// 	});
-// 	console.debug('Mindmap registerHandler end');
-// }
-
 if ($('#isPublic').val() && OCA.FilesMindMap.isSupportedMime($('#mimetype').val())) {
 	var sharingToken = $('#sharingToken').val();
 	var downloadUrl = OC.generateUrl('/s/{token}/download', {token: sharingToken});
 	var viewer = OCA.FilesMindMap;
 	viewer.show(downloadUrl, false);
 }
+
 console.log('files_mindmaps loaded.');

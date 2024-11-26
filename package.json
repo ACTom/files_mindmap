@@ -33,6 +33,7 @@
     "@nextcloud/l10n": "^3.0.0",
     "@nextcloud/logger": "^3.0.0",
     "@nextcloud/router": "^3.0.0",
+    "@nextcloud/paths": "^3.0.0",
     "jszip": "^3.10.1"
   },
   "devDependencies": {
