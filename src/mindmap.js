@@ -10,7 +10,8 @@ import {
 	davResultToNode,
 	File,
 	Permission,
-	davGetDefaultPropfind
+	davGetDefaultPropfind,
+	getUniqueName
 } from '@nextcloud/files'
 import { emit } from '@nextcloud/event-bus'
 import axios from '@nextcloud/axios'
@@ -213,7 +214,7 @@ var FilesMindMap = {
 			},
 			async handler(context, content) {
 				const contentNames = content.map((node) => node.basename)
-				const fileName = getUniqueName(t('files', "New mindmap.km"), contentNames)
+				const fileName = getUniqueName(t('files_mindmap', "New mind map.km"), contentNames)
 				const source = context.encodedSource + '/' + encodeURIComponent(fileName)
 	
 				const response = await axios({
@@ -236,11 +237,11 @@ var FilesMindMap = {
 					root: context?.root || '/files/' + getCurrentUser()?.uid,
 				})
 	
-				FilesMindMap.showMessage(t('files_mindmap', 'Created "{name}"', { name: fileName }))
+				// FilesMindMap.showMessage(t('files_mindmap', 'Created "{name}"', { name: fileName }))
 	
 				emit('files:node:created', file)
-	
-				OCA.Viewer.openWith('mindmap', { path: context.path });
+
+				OCA.Viewer.openWith('mindmap', { path: file.path });
 			},
 		});
 	},
@@ -270,15 +271,15 @@ var FilesMindMap = {
 };
 
 // TODO: move to @nextcloud/files
-function getUniqueName(name, names) {
-	let newName = name
-	let i = 1
-	while (names.includes(newName)) {
-		const ext = extname(name)
-		newName = `${basename(name, ext)} (${i++})${ext}`
-	}
-	return newName
-}
+// function getUniqueName(name, names) {
+// 	let newName = name
+// 	let i = 1
+// 	while (names.includes(newName)) {
+// 		const ext = extname(name)
+// 		newName = `${basename(name, ext)} (${i++})${ext}`
+// 	}
+// 	return newName
+// }
 
 OCA.FilesMindMap = FilesMindMap;
 
