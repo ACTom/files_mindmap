@@ -7,7 +7,7 @@ source_dir=$(build_dir)/source
 sign_dir=$(build_dir)/sign
 package_name=$(app_name)
 cert_dir=$(CURDIR)/../../key
-version+=0.0.30
+version+=0.0.31
 
 all: build-front appstore
 
@@ -21,7 +21,7 @@ clean:
 	rm -rf $(build_dir)
 
 build-front:
-	npm ci
+	#npm ci
 	npm run build
 
 appstore: clean
@@ -37,6 +37,8 @@ appstore: clean
 	--exclude=/README.md \
 	--exclude=/.gitignore \
 	--exclude=/Makefile \
+	--exclude=/node_modules \
+	--exclude=/src \
 	$(project_dir)/ $(sign_dir)/$(app_name)
 
 	@if [[ -f $(cert_dir)/$(app_name).key && -f $(cert_dir)/$(app_name).crt ]]; then \
