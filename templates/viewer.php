@@ -1,14 +1,15 @@
 <?php
-  /** @var array $_ */
-  /** @var OCP\IURLGenerator $urlGenerator */
-  $urlGenerator = $_['urlGenerator'];
-  $version = \OC::$server->getAppManager()->getAppVersion('files_mindmap');
-  $lang = $_['lang'];
-  if (method_exists(\OC::$server, 'getContentSecurityPolicyNonceManager')) {
-      $nonce = \OC::$server->getContentSecurityPolicyNonceManager()->getNonce();
-  } else {
-      $nonce = '';
-  }
+    /** @var array $_ */
+    use OCP\App\IAppManager;
+    use OCP\IURLGenerator;
+    $urlGenerator = \OC::$server->get(IURLGenerator::class);
+    $version = \OC::$server[IAppManager::class]->getAppVersion('files_mindmap');
+    $lang = $_['lang'];
+    if (method_exists(\OC::$server, 'getContentSecurityPolicyNonceManager')) {
+        $nonce = \OC::$server->getContentSecurityPolicyNonceManager()->getNonce();
+    } else {
+        $nonce = '';
+    }
 ?>
 <!DOCTYPE html>
 <html>
@@ -24,7 +25,7 @@
 	<link rel="stylesheet" href="<?php p($urlGenerator->linkTo('files_mindmap', 'vendor/kityminder-core/dist/kityminder.core.css')) ?>?v=<?php p($version) ?>" />
 	<link rel="stylesheet" href="<?php p($urlGenerator->linkTo('files_mindmap', 'vendor/color-picker/dist/color-picker.min.css')) ?>?v=<?php p($version) ?>" />
 	<link rel="stylesheet" href="<?php p($urlGenerator->linkTo('files_mindmap', 'vendor/kityminder-editor/kityminder.editor.min.css')) ?>?v=<?php p($version) ?>">
-	<link rel="stylesheet" href="<?php echo(\OC::$WEBROOT . "/themes/" . \OC_Util::getTheme() . "/apps/files_mindmap/css/style.css") /* add custom css to iframe */ ?>" />
+	<link rel="stylesheet" href="<?php p($urlGenerator->linkTo('files_mindmap', 'css/style.css')) /* add custom css to iframe */ ?>" />
 
 
 	<style>
@@ -52,49 +53,9 @@
 			left: 0;
 			right: 0;
 		}
-		#close-button {
-            width: 20px;
-            height: 20px;
-            line-height: 20px;
-            display: block;
-            position: absolute;
-            right:6px;
-            top:6px;
-            font-family: Helvetica, STHeiti;
-            font-size: 18px;
-            border-radius: 20px;
-            background: #999;
-            color: #FFF;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, .3);
-            -moz-transition: linear .06s;
-            -webkit-transition: linear .06s;
-            transition: linear .06s;
-            padding: 0;
-            text-align: center;
-            text-decoration: none;
-            outline: none;
-            cursor: pointer;
-			z-index: 1000;
-        }
-        #close-button:hover {
-            width: 20px;
-            height: 20px;
-            line-height: 20px;
-            right:6px;
-            top:6px;
-            color: #FFF;
-            box-shadow: 0 1px 3px rgba(209, 40, 42, .5);
-            background: #d1282a;
-            border-radius: 24px;
-            transition: all 0.2s ease-out;
-            text-align: center;
-            text-decoration: none;
-            opacity: 0.8;
-            outline: none;
-        }
         #autosave-div {
             position: absolute;
-            right: 280px;
+            right: 240px;
             z-index: 10000;
             width: 100px;
         }
@@ -103,14 +64,14 @@
         }
         #save-div {
             position: absolute;
-            right: 180px;
+            right: 140px;
             z-index: 10000;
             width: 60px;
         }
 
         #export-button {
             position: absolute;
-            right: 40px;
+            right: 5px;
             z-index: 10000;
         }
 	</style>
@@ -119,7 +80,6 @@
     var lang = '<?=$lang?>';
 </script>
 <body ng-app="mindmap" ng-controller="MainController">
-<a id="close-button" href="javascript:void(0);">×</a>
 <div id="autosave-div" class="checkbox btn-group-vertical">
     <label>
       <input type="checkbox" id="autosave-checkbox" checked="checked" title="<?php p($l->t('AutoSave')); ?>"><?php p($l->t('AutoSave')); ?>

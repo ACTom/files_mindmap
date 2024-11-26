@@ -10,7 +10,7 @@ use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use OCP\Util;
 
-class LoadAdditionalScripts implements IEventListener {
+class LoadAdditionalListener implements IEventListener {
 	public function handle(Event $event): void {
 		if (!($event instanceof LoadAdditionalScriptsEvent)) {
 			return;
@@ -20,7 +20,6 @@ class LoadAdditionalScripts implements IEventListener {
 
 	public static function additionalScripts() {
 		Util::addStyle(Application::APPNAME, 'style');
-		Util::addScript(Application::APPNAME, 'jszip');
-		Util::addScript(Application::APPNAME, 'mindmap');
+		Util::addScript(Application::APPNAME, 'files_mindmap-mindmap');
 	}
 }

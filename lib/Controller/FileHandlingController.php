@@ -1,7 +1,6 @@
 <?php
 namespace OCA\Files_MindMap\Controller;
 
-
 use OC\HintException;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;

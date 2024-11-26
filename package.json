@@ -1,0 +1,45 @@
+{
+  "name": "files_mindmap",
+  "version": "0.0.31",
+  "description": "A Mind map editor",
+  "author": "Jingtao Yan",
+  "license": "AGPL-3.0-or-later",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/ACTom/files_mindmap/issues"
+  },
+  "homepage": "https://github.com/ACTom/files_mindmap#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ACTom/files_mindmap.git"
+  },
+  "engines": {
+    "node": "^20.0.0",
+    "npm": "^10.0.0"
+  },
+  "browserslist": [
+    "extends @nextcloud/browserslist-config"
+  ],
+  "scripts": {
+    "build": "vite --mode production build",
+    "dev": "vite --mode development build",
+    "watch": "vite --mode development build --watch"
+  },
+  "dependencies": {
+    "@mdi/svg": "^7.3.67",
+    "@nextcloud/axios": "^2.4.0",
+    "@nextcloud/event-bus": "^3.1.0",
+    "@nextcloud/files": "^3.0.0",
+    "@nextcloud/l10n": "^3.0.0",
+    "@nextcloud/logger": "^3.0.0",
+    "@nextcloud/router": "^3.0.0",
+    "@nextcloud/paths": "^3.0.0",
+    "jszip": "^3.10.1"
+  },
+  "devDependencies": {
+    "@nextcloud/browserslist-config": "^3.0.0",
+    "@nextcloud/eslint-config": "^v8.3.0",
+    "@nextcloud/vite-config": "^1.0.1",
+    "vite-plugin-static-copy": "^0.17.1"
+  }
+}

@@ -4,7 +4,6 @@ namespace OCA\Files_MindMap\AppInfo;
 
 use OC\Files\Type\Detection;
 use OCA\Files\Event\LoadAdditionalScriptsEvent;
-use OCA\Files_MindMap\Listener\LoadAdditionalScripts;
 use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
@@ -13,6 +12,9 @@ use OCP\AppFramework\Http\ContentSecurityPolicy;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\IMimeTypeDetector;
 use OCP\Security\CSP\AddContentSecurityPolicyEvent;
+use OCA\Viewer\Event\LoadViewer;
+use OCA\Files_MindMap\Listener\LoadAdditionalListener;
+use OCA\Files_MindMap\Listener\LoadViewerListener;
 
 
 class Application extends App implements IBootstrap {
@@ -34,16 +36,8 @@ class Application extends App implements IBootstrap {
 	}
 
 	public function register(IRegistrationContext $context): void {
-
-		$context->registerEventListener(
-			LoadAdditionalScriptsEvent::class,
-			LoadAdditionalScripts::class
-		);
-
-		$container = $this->getContainer();
-		/** @var  IEventDispatcher $eventDispatcher */
-		$eventDispatcher = $container->get(IEventDispatcher::class);
-		$eventDispatcher->addListener('OCA\Files_Sharing::loadAdditionalScripts', array('OCA\Files_MindMap\Listener\LoadAdditionalScripts','additionalScripts'));
+		$context->registerEventListener(LoadAdditionalScriptsEvent::class, LoadAdditionalListener::class);
+		$context->registerEventListener(LoadViewer::class, LoadViewerListener::class);
 	}
 
 	public function boot(IBootContext $context): void {
@@ -55,7 +49,7 @@ class Application extends App implements IBootstrap {
 	public function registerEventsSecurity(IEventDispatcher $dispatcher): void {
 		$dispatcher->addListener(AddContentSecurityPolicyEvent::class, function (AddContentSecurityPolicyEvent $e) {
 			$policy = new ContentSecurityPolicy();
-			$policy->addAllowedChildSrcDomain("'self'");
+			$policy->addAllowedFrameDomain("'self'");
 			$policy->addAllowedFrameDomain("data:");
 			$e->addPolicy($policy);
 		});
