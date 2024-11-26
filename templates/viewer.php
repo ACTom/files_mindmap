@@ -55,7 +55,7 @@
 		}
         #autosave-div {
             position: absolute;
-            right: 240px;
+            right: 260px;
             z-index: 10000;
             width: 100px;
         }
@@ -64,9 +64,9 @@
         }
         #save-div {
             position: absolute;
-            right: 140px;
+            right: 105px;
             z-index: 10000;
-            width: 60px;
+            width: 160px;
         }
 
         #export-button {
@@ -99,19 +99,19 @@
     </button>
     <ul class="dropdown-menu" role="menu">
         <li>
-            <a id="export-png" href"><?php p($l->t('Export to PNG')); ?></a>
+            <a id="export-png" href="javascript:void(0)" target="_self"><?php p($l->t('Export to PNG')); ?></a>
         </li>
         <li>
-            <a id="export-svg" href"><?php p($l->t('Export to SVG')); ?></a>
+            <a id="export-svg" href="javascript:void(0)" target="_self"><?php p($l->t('Export to SVG')); ?></a>
         </li>
         <li>
-            <a id="export-pdf" href"><?php p($l->t('Export to PDF')); ?></a>
+            <a id="export-pdf" href="javascript:void(0)" target="_self"><?php p($l->t('Export to PDF')); ?></a>
         </li>
         <li>
-            <a id="export-markdown" href"><?php p($l->t('Export to Markdown')); ?></a>
+            <a id="export-markdown" href="javascript:void(0)" target="_self"><?php p($l->t('Export to Markdown')); ?></a>
         </li>
         <li>
-            <a id="export-text" href"><?php p($l->t('Export to Text')); ?></a>
+            <a id="export-text" href="javascript:void(0)" target="_self"><?php p($l->t('Export to Text')); ?></a>
         </li>
     </ul>
 </div>

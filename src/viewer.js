@@ -84,10 +84,6 @@ redirectIfNotDisplayedInFrame();
 			$('#save-button').click(function() {
 				self.save();
 			});
-			$('#close-button').click(function() {
-				self.close();
-				return false;
-			});
 		},
 		close: function() {
 			var self = this;
