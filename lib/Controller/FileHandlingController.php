@@ -1,7 +1,7 @@
 <?php
 namespace OCA\Files_MindMap\Controller;
 
-use OC\HintException;
+use OCP\HintException;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
@@ -10,16 +10,16 @@ use OCP\Files\Folder;
 use OCP\Files\ForbiddenException;
 use OCP\Files\GenericFileException;
 use OCP\IL10N;
-use OCP\ILogger;
 use OCP\IRequest;
 use OCP\Lock\LockedException;
+use \Psr\Log\LoggerInterface;
 
 class FileHandlingController extends Controller{
 
 	/** @var IL10N */
 	private $l;
 
-	/** @var ILogger */
+	/** @var LoggerInterface */
 	private $logger;
 
 	/** @var Folder */
@@ -31,13 +31,13 @@ class FileHandlingController extends Controller{
 	 * @param string $AppName
 	 * @param IRequest $request
 	 * @param IL10N $l10n
-	 * @param ILogger $logger
+	 * @param LoggerInterface $logger
 	 * @param Folder $userFolder
 	 */
 	public function __construct($AppName,
 								IRequest $request,
 								IL10N $l10n,
-								ILogger $logger,
+								LoggerInterface $logger,
 								Folder $userFolder) {
 		parent::__construct($AppName, $request);
 		$this->l = $l10n;
