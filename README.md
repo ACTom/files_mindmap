@@ -13,12 +13,22 @@ You can also click a .km file to edit.
 ## Contribute
 translate: Go to [https://github.com/ACTom/kityminder-editor](https://github.com/ACTom/kityminder-editor), and translate strings in l10n directory.
 
+## Support Format
+| Format Name | File Extension | Read | Save |
+|------------|----------------|------|-------|
+| kityminder | *.km          | ✓    | ✓     |
+| xmind      | *.xmind       | ✓(only first page root node)    | ✗     |
+| freemind   | *.mm          | ✓    | ✗     |
+
+
+---
+
 # 中文说明
 这是Nextcloud的一个思维导图应用，它可以让用户在浏览器中打开、编辑、保存思维导图文件，应用的图标来自于[Icons8](https://icons8.com)，应用核心显示模块采用[KityMinder Editor](https://github.com/fex-team/kityminder-editor)。
 
 ## 如何使用
 1. 安装应用
-2. 点击Nextcloud 文件界面的新建按钮
+2. 点击 Nextcloud 文件界面的新建按钮
 3. 选择"新建思维导图文件"
 
 你也可以直接点击一个.km文件来编辑。
@@ -30,7 +40,10 @@ translate: Go to [https://github.com/ACTom/kityminder-editor](https://github.com
 
 ![截图3](https://raw.githubusercontent.com/ACTom/files_mindmap/master/screenshots/3.png)
 
-## 计划
-* 本地图片上传并编码至km文件（已完成）
-* 多标签页思维导图kmp格式支持
-* xmind格式支持
+
+## 支持的格式
+| 格式名称 | 文件扩展名 | 读取 | 保存 |
+|------------|----------------|------|-------|
+| kityminder | *.km          | ✓    | ✓     |
+| xmind      | *.xmind       | ✓(仅第一个页面根节点)    | ✗     |
+| freemind   | *.mm          | ✓    | ✗     |
