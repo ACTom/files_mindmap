@@ -20,6 +20,6 @@ class LoadAdditionalListener implements IEventListener {
 
 	public static function additionalScripts() {
 		Util::addStyle(Application::APPNAME, 'style');
-		Util::addScript(Application::APPNAME, 'files_mindmap-mindmap');
+//		Util::addScript(Application::APPNAME, 'files_mindmap-mindmap');
 	}
 }

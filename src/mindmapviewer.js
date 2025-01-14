@@ -1,4 +1,12 @@
 import MindMap from './views/MindMap.vue'
+import FilesMindMap from './mindmap'
+
+OCA.FilesMindMap = FilesMindMap;
+
+FilesMindMap.init();
+FilesMindMap.registerNewFileMenuPlugin();
+FilesMindMap.registerFileActions();
+
 
 const supportedMimes = OCA.FilesMindMap.getSupportedMimetypes();
 

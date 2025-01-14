@@ -17,6 +17,7 @@ import { emit } from '@nextcloud/event-bus'
 import axios from '@nextcloud/axios'
 import { getCurrentUser } from '@nextcloud/auth'
 import { dirname } from '@nextcloud/paths'
+import { isPublicShare } from '@nextcloud/sharing/public'
 
 
 import util from './util'
@@ -71,6 +72,18 @@ var FilesMindMap = {
 		OC.Notification.hide(id, t);
 	},
 
+	/**
+	 * Determine if this page is public mindmap share page
+	 * @returns {boolean}
+	 */
+    isMindmapPublic: function() {
+		if (!isPublicShare()) {
+			return false;
+		}
+
+		return this.isSupportedMime($('#mimetype').val());
+    },
+	
 	save: function(data, success, fail) {
 		var url = '';
 		var path = this._file.dir + '/' + this._file.name;
@@ -270,36 +283,4 @@ var FilesMindMap = {
 	},
 };
 
-// TODO: move to @nextcloud/files
-// function getUniqueName(name, names) {
-// 	let newName = name
-// 	let i = 1
-// 	while (names.includes(newName)) {
-// 		const ext = extname(name)
-// 		newName = `${basename(name, ext)} (${i++})${ext}`
-// 	}
-// 	return newName
-// }
-
-OCA.FilesMindMap = FilesMindMap;
-
-
-console.debug('files_mindmaps start.');
-
-// register mime types
-FilesMindMap.init();
-
-console.debug('files_mindmaps registerNewFileMenuPlugin.');
-// Declare the plugin and its attachments
-OCA.FilesMindMap.registerNewFileMenuPlugin();
-console.debug('files_mindmaps registerFileActions.');
-OCA.FilesMindMap.registerFileActions();
-
-if ($('#isPublic').val() && OCA.FilesMindMap.isSupportedMime($('#mimetype').val())) {
-	var sharingToken = $('#sharingToken').val();
-	var downloadUrl = OC.generateUrl('/s/{token}/download', {token: sharingToken});
-	var viewer = OCA.FilesMindMap;
-	viewer.show(downloadUrl, false);
-}
-
-console.log('files_mindmaps loaded.');
+export default FilesMindMap;
